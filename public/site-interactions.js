@@ -176,12 +176,32 @@ function submitDedicationForm() {
 
       form.style.display = 'none';
       ok.style.display = 'block';
-      ok.focus();
+      requestAnimationFrame(() => {
+        ok.focus({ preventScroll: true });
+        ok.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
     } catch {
       btn.disabled = false;
       btn.innerHTML = originalButton;
       alert('No pudimos enviar tu historia. Intenta de nuevo.');
     }
+  });
+}
+
+function resetDedicationForm() {
+  const form = document.getElementById('buzonForm');
+  const ok = document.getElementById('buzonOk');
+  const song = document.getElementById('b-cancion');
+
+  if (!form || !ok) return;
+
+  form.reset();
+  form.style.display = '';
+  ok.style.display = 'none';
+
+  requestAnimationFrame(() => {
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    song && song.focus({ preventScroll: true });
   });
 }
 
@@ -254,5 +274,6 @@ Object.assign(window, {
   carouselGo,
   carouselPrev,
   carouselNext,
+  resetDedicationForm,
   switchTab,
 });

@@ -486,10 +486,13 @@
         </div>
       </form>
 
-      <div class="buzon-ok" id="buzonOk" role="alert" aria-live="polite">
+      <div class="buzon-ok" id="buzonOk" role="alert" aria-live="polite" tabindex="-1">
         <div class="ok-icon">✉</div>
         <h3>Carta enviada.</h3>
         <p>La recibí. Gracias por compartirla conmigo.</p>
+        <button type="button" class="btn-otra" onclick="resetDedicationForm()">
+          Contar otra historia
+        </button>
       </div>
 
       <!-- FORM: COMPARTIR DEDICATORIA -->
@@ -553,7 +556,7 @@
         </div>
       </form>
 
-      <div class="buzon-ok" id="dedicarOk" style="display:none" role="alert" aria-live="polite">
+      <div class="buzon-ok" id="dedicarOk" style="display:none" role="alert" aria-live="polite" tabindex="-1">
         <div class="ok-icon">♥</div>
         <h3>Dedicatoria creada.</h3>
         <p>Podrás compartirla por el medio que prefieras.</p>
