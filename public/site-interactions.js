@@ -123,7 +123,69 @@ function submitForm(formId, btnId, formEl, successId) {
   });
 }
 
-submitForm('buzonForm','buzonBtn','buzonForm','buzonOk');
+function submitDedicationForm() {
+  const form = document.getElementById('buzonForm');
+  const btn = document.getElementById('buzonBtn');
+  const ok = document.getElementById('buzonOk');
+
+  if (!form || !btn || !ok) return;
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    let valid = true;
+    form.querySelectorAll('[required]').forEach(field => {
+      field.classList.remove('err');
+      if (!field.value.trim()) {
+        field.classList.add('err');
+        valid = false;
+      }
+    });
+
+    if (!valid) {
+      form.querySelector('.err').focus();
+      return;
+    }
+
+    const formData = new FormData(form);
+    const value = name => String(formData.get(name) ?? '');
+    const originalButton = btn.innerHTML;
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    try {
+      const response = await fetch('/api/dedications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          allowPublishing: value('allowPublishing') === 'true',
+          artist: value('artist'),
+          instagram: value('instagram'),
+          message: value('message'),
+          recipientName: value('recipientName'),
+          senderName: value('senderName'),
+          song: value('song'),
+          website: value('bot-field'),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Unable to submit dedication.');
+      }
+
+      form.style.display = 'none';
+      ok.style.display = 'block';
+      ok.focus();
+    } catch {
+      btn.disabled = false;
+      btn.innerHTML = originalButton;
+      alert('No pudimos enviar tu historia. Intenta de nuevo.');
+    }
+  });
+}
+
+submitDedicationForm();
 submitForm('nlForm','nlBtn','nlForm','nlOk');
 
 /* ── Carrusel about ── */
