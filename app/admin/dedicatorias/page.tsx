@@ -263,8 +263,56 @@ export default async function AdminDedicationsPage({
             >
               <div className={styles.cardHeader}>
                 <p className={styles.date}>{formatDate(dedication.created_at)}</p>
-                <p className={styles.status}>{statusLabels[dedication.status]}</p>
+                <details className={styles.statusMenu}>
+                  <summary
+                    aria-label={`Cambiar estado: ${statusLabels[dedication.status]}`}
+                    className={styles.statusMenuTrigger}
+                  >
+                    {statusLabels[dedication.status]}
+                  </summary>
+                  <div className={styles.statusMenuContent}>
+                    <p className={styles.statusMenuLabel}>Cambiar estado</p>
+                    <div className={styles.statusMenuOptions}>
+                      {Object.entries(statusLabels).map(([value, label]) => (
+                        <form
+                          action="/api/admin/dedications/update"
+                          key={value}
+                          method="post"
+                        >
+                          <input name="id" type="hidden" value={dedication.id} />
+                          <input
+                            name="filterStatus"
+                            type="hidden"
+                            value={statusFilter}
+                          />
+                          <input
+                            name="filterPermission"
+                            type="hidden"
+                            value={permissionFilter}
+                          />
+                          <input name="status" type="hidden" value={value} />
+                          <button
+                            className={
+                              dedication.status === value
+                                ? `${styles.statusMenuOption} ${styles.statusMenuOptionActive}`
+                                : styles.statusMenuOption
+                            }
+                            disabled={dedication.status === value}
+                            type="submit"
+                          >
+                            {label}
+                          </button>
+                        </form>
+                      ))}
+                    </div>
+                  </div>
+                </details>
               </div>
+              {parameters.updated === dedication.id ? (
+                <p className={styles.updatedMessage} role="status">
+                  Estado actualizado correctamente.
+                </p>
+              ) : null}
               <h2 className={styles.song}>
                 {dedication.song} <span>— {dedication.artist}</span>
               </h2>
@@ -297,47 +345,6 @@ export default async function AdminDedicationsPage({
                   </div>
                 ) : null}
               </dl>
-              <form
-                action="/api/admin/dedications/update"
-                className={styles.statusForm}
-                method="post"
-              >
-                <input name="id" type="hidden" value={dedication.id} />
-                <input
-                  name="filterStatus"
-                  type="hidden"
-                  value={statusFilter}
-                />
-                <input
-                  name="filterPermission"
-                  type="hidden"
-                  value={permissionFilter}
-                />
-                <fieldset className={styles.statusChoices}>
-                  <legend className={styles.statusLabel}>Estado de revisión</legend>
-                  <div className={styles.statusOptions}>
-                    {Object.entries(statusLabels).map(([value, label]) => (
-                      <label className={styles.statusOption} key={value}>
-                        <input
-                          defaultChecked={dedication.status === value}
-                          name="status"
-                          type="radio"
-                          value={value}
-                        />
-                        <span>{label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </fieldset>
-                <button className={styles.saveStatusButton} type="submit">
-                  Guardar estado
-                </button>
-              </form>
-              {parameters.updated === dedication.id ? (
-                <p className={styles.updatedMessage} role="status">
-                  Estado actualizado correctamente.
-                </p>
-              ) : null}
             </article>
           ))}
         </section>
