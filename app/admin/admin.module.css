@@ -99,6 +99,136 @@
   margin-top: 28px;
 }
 
+.adminShell {
+  background: var(--w);
+  margin: 0 auto;
+  max-width: 1180px;
+  min-height: 100vh;
+  padding: 48px 24px 72px;
+}
+
+.adminHeader {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--w3);
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  padding-bottom: 32px;
+}
+
+.adminTitle {
+  font-family: var(--fd);
+  font-size: clamp(38px, 6vw, 64px);
+  line-height: 0.98;
+  margin-top: 12px;
+}
+
+.dedicationList {
+  display: grid;
+  gap: 18px;
+  margin-top: 32px;
+}
+
+.dedicationCard,
+.emptyState,
+.errorState {
+  background: var(--w);
+  border: 1px solid var(--w3);
+  border-radius: 14px;
+  padding: 26px;
+}
+
+.cardHeader {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.date,
+.status,
+.details dt {
+  color: var(--ink3);
+  font-family: var(--fm);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.status {
+  border: 1px solid var(--w3);
+  border-radius: 999px;
+  color: var(--ink2);
+  padding: 5px 9px;
+}
+
+.song {
+  font-family: var(--fd);
+  font-size: clamp(24px, 4vw, 34px);
+  line-height: 1.08;
+  margin-top: 18px;
+}
+
+.song span {
+  color: var(--red);
+  font-style: italic;
+}
+
+.message {
+  color: var(--ink2);
+  line-height: 1.7;
+  margin-top: 18px;
+  max-width: 75ch;
+  white-space: pre-wrap;
+}
+
+.details {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 26px;
+}
+
+.details div {
+  min-width: 0;
+}
+
+.details dd {
+  color: var(--ink2);
+  font-size: 14px;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.details a {
+  color: var(--red2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.emptyState,
+.errorState {
+  margin-top: 32px;
+}
+
+.emptyState h2,
+.errorState h2 {
+  font-family: var(--fd);
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.emptyState p,
+.errorState p {
+  color: var(--ink3);
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.errorState {
+  border-color: var(--red);
+}
+
 .logoutButton {
   border: 1px solid var(--w3);
   border-radius: 999px;
@@ -114,5 +244,23 @@
 @media (max-width: 480px) {
   .panel {
     padding: 26px 22px;
+  }
+
+  .adminShell {
+    padding: 28px 16px 48px;
+  }
+
+  .adminHeader {
+    flex-direction: column;
+  }
+
+  .details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dedicationCard,
+  .emptyState,
+  .errorState {
+    padding: 20px;
   }
 }
