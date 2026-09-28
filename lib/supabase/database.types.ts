@@ -18,6 +18,8 @@ export type Database = {
           recipient_name: string | null;
           sender_name: string | null;
           song: string;
+          spotify_track_id: string | null;
+          spotify_url: string | null;
           status: DedicationStatus;
           updated_at: string;
         };
@@ -31,6 +33,8 @@ export type Database = {
           recipient_name?: string | null;
           sender_name?: string | null;
           song: string;
+          spotify_track_id?: string | null;
+          spotify_url?: string | null;
           status?: DedicationStatus;
           updated_at?: string;
         };
@@ -44,6 +48,8 @@ export type Database = {
           recipient_name?: string | null;
           sender_name?: string | null;
           song?: string;
+          spotify_track_id?: string | null;
+          spotify_url?: string | null;
           status?: DedicationStatus;
           updated_at?: string;
         };
@@ -59,6 +65,8 @@ export type Database = {
           sender_name: string | null;
           share_token_hash: string;
           song: string;
+          spotify_track_id: string | null;
+          spotify_url: string | null;
         };
         Insert: {
           artist: string;
@@ -69,6 +77,8 @@ export type Database = {
           sender_name?: string | null;
           share_token_hash: string;
           song: string;
+          spotify_track_id?: string | null;
+          spotify_url?: string | null;
         };
         Update: {
           artist?: string;
@@ -79,6 +89,8 @@ export type Database = {
           sender_name?: string | null;
           share_token_hash?: string;
           song?: string;
+          spotify_track_id?: string | null;
+          spotify_url?: string | null;
         };
         Relationships: [];
       };

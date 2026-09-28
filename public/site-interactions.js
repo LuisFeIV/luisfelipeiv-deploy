@@ -142,8 +142,11 @@ function submitDedicationForm() {
       }
     });
 
-    if (!valid) {
-      form.querySelector('.err').focus();
+    const musicPickerValid = validateMusicPicker(form);
+
+    if (!valid || !musicPickerValid) {
+      const invalidField = form.querySelector('.err');
+      if (invalidField) invalidField.focus();
       return;
     }
 
@@ -166,6 +169,8 @@ function submitDedicationForm() {
           recipientName: value('recipientName'),
           senderName: value('senderName'),
           song: value('song'),
+          spotifyTrackId: value('spotifyTrackId'),
+          spotifyUrl: value('spotifyUrl'),
           website: value('bot-field'),
         }),
       });
@@ -204,6 +209,178 @@ function resetDedicationForm() {
     song && song.focus({ preventScroll: true });
   });
 }
+
+function setMusicPickerHelp(picker, message) {
+  const help = picker.querySelector('[data-music-help]');
+  if (help) help.textContent = message;
+}
+
+function clearMusicPickerResults(picker) {
+  const results = picker.querySelector('[data-music-results]');
+  const query = picker.querySelector('[data-music-query]');
+
+  if (results) results.replaceChildren();
+  if (query) query.setAttribute('aria-expanded', 'false');
+}
+
+function clearMusicPickerSelection(picker) {
+  picker.querySelector('[data-music-song]').value = '';
+  picker.querySelector('[data-music-artist]').value = '';
+  picker.querySelector('[data-music-track-id]').value = '';
+  picker.querySelector('[data-music-url]').value = '';
+  picker.classList.remove('is-selected', 'is-invalid');
+  picker.querySelector('[data-music-clear]').hidden = true;
+}
+
+function selectMusicTrack(picker, track) {
+  const query = picker.querySelector('[data-music-query]');
+
+  picker.querySelector('[data-music-song]').value = track.name;
+  picker.querySelector('[data-music-artist]').value = track.artists;
+  picker.querySelector('[data-music-track-id]').value = track.id;
+  picker.querySelector('[data-music-url]').value = track.url;
+  query.value = `${track.name} — ${track.artists}`;
+  picker.classList.add('is-selected');
+  picker.classList.remove('is-invalid');
+  picker.querySelector('[data-music-clear]').hidden = false;
+  clearMusicPickerResults(picker);
+  setMusicPickerHelp(picker, 'Canción seleccionada de Spotify.');
+}
+
+function renderMusicPickerResults(picker, tracks) {
+  const results = picker.querySelector('[data-music-results]');
+  const query = picker.querySelector('[data-music-query]');
+
+  results.replaceChildren();
+
+  if (!tracks.length) {
+    setMusicPickerHelp(picker, 'No encontramos coincidencias. Puedes escribirla manualmente.');
+    query.setAttribute('aria-expanded', 'false');
+    return;
+  }
+
+  tracks.forEach(track => {
+    const option = document.createElement('button');
+    const song = document.createElement('span');
+    const artist = document.createElement('span');
+    const source = document.createElement('span');
+
+    option.className = 'music-picker-option';
+    option.type = 'button';
+    option.setAttribute('role', 'option');
+    song.className = 'music-picker-option-song';
+    artist.className = 'music-picker-option-artist';
+    source.className = 'music-picker-option-source';
+    song.textContent = track.name;
+    artist.textContent = track.artists;
+    source.textContent = 'Spotify';
+    option.append(song, artist, source);
+    option.addEventListener('click', () => selectMusicTrack(picker, track));
+    results.append(option);
+  });
+
+  query.setAttribute('aria-expanded', 'true');
+  setMusicPickerHelp(picker, 'Elige una canción de los resultados de Spotify.');
+}
+
+function setupMusicPicker(picker) {
+  const query = picker.querySelector('[data-music-query]');
+  const clear = picker.querySelector('[data-music-clear]');
+  const manualSong = picker.querySelector('[data-music-manual-song]');
+  const manualArtist = picker.querySelector('[data-music-manual-artist]');
+  let controller = null;
+  let timeoutId = 0;
+
+  const useManualSong = () => {
+    const song = manualSong.value.trim();
+    const artist = manualArtist.value.trim();
+
+    clearMusicPickerSelection(picker);
+    picker.querySelector('[data-music-song]').value = song;
+    picker.querySelector('[data-music-artist]').value = artist;
+    query.value = song && artist ? `${song} — ${artist}` : '';
+
+    if (song && artist) {
+      picker.classList.add('is-selected');
+      setMusicPickerHelp(picker, 'Canción escrita manualmente.');
+    } else {
+      setMusicPickerHelp(picker, 'Escribe el título y el artista para continuar.');
+    }
+  };
+
+  query.addEventListener('input', () => {
+    const value = query.value.trim();
+
+    window.clearTimeout(timeoutId);
+    if (controller) controller.abort();
+    clearMusicPickerSelection(picker);
+    clearMusicPickerResults(picker);
+
+    if (value.length < 2) {
+      setMusicPickerHelp(picker, 'Escribe al menos 2 letras para buscar en Spotify.');
+      return;
+    }
+
+    setMusicPickerHelp(picker, 'Buscando en Spotify…');
+    timeoutId = window.setTimeout(async () => {
+      controller = new AbortController();
+
+      try {
+        const response = await fetch(`/api/spotify/search?q=${encodeURIComponent(value)}`, {
+          signal: controller.signal,
+        });
+        const payload = await response.json();
+
+        if (!response.ok || !Array.isArray(payload.tracks)) {
+          setMusicPickerHelp(picker, payload.error || 'No pudimos buscar canciones. Puedes escribirla manualmente.');
+          return;
+        }
+
+        if (query.value.trim() !== value) return;
+        renderMusicPickerResults(picker, payload.tracks);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setMusicPickerHelp(picker, 'No pudimos buscar canciones. Puedes escribirla manualmente.');
+        }
+      }
+    }, 300);
+  });
+
+  clear.addEventListener('click', () => {
+    clearMusicPickerSelection(picker);
+    clearMusicPickerResults(picker);
+    query.value = '';
+    query.focus();
+    setMusicPickerHelp(picker, 'Escribe para buscar en Spotify.');
+  });
+  manualSong.addEventListener('input', useManualSong);
+  manualArtist.addEventListener('input', useManualSong);
+  picker.closest('form').addEventListener('reset', () => {
+    window.setTimeout(() => {
+      clearMusicPickerSelection(picker);
+      clearMusicPickerResults(picker);
+      setMusicPickerHelp(picker, 'Escribe para buscar en Spotify.');
+    });
+  });
+}
+
+function validateMusicPicker(form) {
+  const picker = form.querySelector('[data-music-picker]');
+  const song = picker.querySelector('[data-music-song]').value.trim();
+  const artist = picker.querySelector('[data-music-artist]').value.trim();
+
+  if (song && artist) {
+    picker.classList.remove('is-invalid');
+    return true;
+  }
+
+  picker.classList.add('is-invalid');
+  setMusicPickerHelp(picker, 'Elige una canción de Spotify o escribe título y artista manualmente.');
+  picker.querySelector('[data-music-query]').focus();
+  return false;
+}
+
+document.querySelectorAll('[data-music-picker]').forEach(setupMusicPicker);
 
 submitDedicationForm();
 submitForm('nlForm','nlBtn','nlForm','nlOk');
@@ -273,8 +450,11 @@ function submitPrivateDedicationForm() {
       }
     });
 
-    if (!valid) {
-      form.querySelector('.err').focus();
+    const musicPickerValid = validateMusicPicker(form);
+
+    if (!valid || !musicPickerValid) {
+      const invalidField = form.querySelector('.err');
+      if (invalidField) invalidField.focus();
       return;
     }
 
@@ -295,6 +475,8 @@ function submitPrivateDedicationForm() {
           recipientName: value('recipientName'),
           senderName: value('senderName'),
           song: value('song'),
+          spotifyTrackId: value('spotifyTrackId'),
+          spotifyUrl: value('spotifyUrl'),
           website: value('bot-field-d'),
         }),
       });

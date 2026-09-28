@@ -14,6 +14,26 @@ const optionalText = (maxLength: number) =>
     .transform((value) => value || undefined)
     .optional();
 
+const spotifyTrackId = z
+  .string()
+  .trim()
+  .regex(/^[A-Za-z0-9]{22}$/, "La canción de Spotify no es válida.")
+  .optional()
+  .or(z.literal(""))
+  .transform((value) => value || undefined);
+
+const spotifyUrl = z
+  .string()
+  .trim()
+  .url("El enlace de Spotify no es válido.")
+  .refine(
+    (value) => /^https:\/\/open\.spotify\.com\/track\/[A-Za-z0-9]{22}/.test(value),
+    "El enlace de Spotify no es válido.",
+  )
+  .optional()
+  .or(z.literal(""))
+  .transform((value) => value || undefined);
+
 const instagramHandle = z
   .string()
   .trim()
@@ -51,6 +71,8 @@ export const dedicationSubmissionSchema = z.object({
     .trim()
     .min(1, "Indica la canción.")
     .max(MAX_SONG_LENGTH),
+  spotifyTrackId,
+  spotifyUrl,
   artist: z
     .string()
     .trim()
@@ -88,6 +110,8 @@ export const privateDedicationSubmissionSchema = z.object({
     .trim()
     .min(1, "Indica la canción.")
     .max(MAX_SONG_LENGTH),
+  spotifyTrackId,
+  spotifyUrl,
   website: z.string().max(0, "Solicitud rechazada.").optional().default(""),
 });
 

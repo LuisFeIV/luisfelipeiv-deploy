@@ -40,7 +40,9 @@ const getPrivateDedication = cache(async (slug: string) => {
     const supabase = createSupabaseServerClient();
     const { data, error } = await supabase
       .from("private_dedications")
-      .select("sender_name, recipient_name, song, artist, message")
+      .select(
+        "sender_name, recipient_name, song, artist, message, spotify_track_id, spotify_url",
+      )
       .eq("share_token_hash", hashShareToken(token))
       .maybeSingle();
 
@@ -116,6 +118,16 @@ export default async function PrivateDedicationPage({
           </h1>
           <h2 className={styles.song}>{dedication.song}</h2>
           <p className={styles.artist}>{dedication.artist}</p>
+          {dedication.spotify_track_id ? (
+            <iframe
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              allowFullScreen
+              className={styles.spotifyPlayer}
+              loading="lazy"
+              src={`https://open.spotify.com/embed/track/${dedication.spotify_track_id}?utm_source=luisfelipeiv`}
+              title={`Escuchar ${dedication.song} en Spotify`}
+            />
+          ) : null}
           <p className={styles.message}>{dedication.message}</p>
           <p className={styles.sender}>
             De parte de{" "}

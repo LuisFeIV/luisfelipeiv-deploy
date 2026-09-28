@@ -91,6 +91,14 @@
   text-transform: uppercase;
 }
 
+.spotifyPlayer {
+  border: 0;
+  border-radius: 12px;
+  height: 152px;
+  margin-top: 24px;
+  width: 100%;
+}
+
 .message {
   color: var(--ink2);
   font-size: 18px;

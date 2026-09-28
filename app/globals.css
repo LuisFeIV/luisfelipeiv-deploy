@@ -852,6 +852,41 @@ button{font-family:var(--fb);cursor:pointer;border:none;background:none;
 }
 .cinput.err,.ctarea.err{border-color:#E53935;background:rgba(229,57,53,.04);}
 
+.music-picker-control{position:relative;}
+.music-picker-control .cinput{padding-right:48px;}
+.music-picker-clear{
+  position:absolute;right:9px;top:50%;transform:translateY(-50%);
+  align-items:center;justify-content:center;width:32px;height:32px;
+  border:1px solid var(--w3);border-radius:50%;background:var(--w);color:var(--ink2);
+  font-size:22px;line-height:1;cursor:pointer;
+}
+.music-picker-clear:hover,.music-picker-clear:focus-visible{border-color:var(--red);color:var(--red);}
+.music-picker-results{
+  overflow:hidden;margin-top:8px;border:1px solid var(--w3);border-radius:8px;background:#fff;
+  box-shadow:0 12px 28px rgba(20,18,16,.08);
+}
+.music-picker-results:empty{display:none;}
+.music-picker-option{
+  display:block;width:100%;padding:12px 14px;border-bottom:1px solid var(--w3);background:#fff;
+  color:var(--ink);font-family:var(--fb);text-align:left;cursor:pointer;
+}
+.music-picker-option:last-child{border-bottom:0;}
+.music-picker-option:hover,.music-picker-option:focus-visible{background:var(--w2);outline:2px solid var(--red);outline-offset:-2px;}
+.music-picker-option-song{display:block;font-family:var(--fd);font-size:17px;font-style:italic;font-weight:700;line-height:1.25;}
+.music-picker-option-artist{display:block;margin-top:4px;color:var(--ink3);font-family:var(--fm);font-size:10px;letter-spacing:.09em;text-transform:uppercase;}
+.music-picker-option-source{display:block;margin-top:6px;color:var(--red);font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;}
+.music-picker-help{display:flex;align-items:flex-start;gap:10px;margin:9px 0 0;color:var(--ink3);font-size:12px;line-height:1.45;}
+.music-picker-help::before{content:"";width:12px;height:1px;margin-top:.68em;flex-shrink:0;background:var(--red);}
+.music-picker.is-selected .music-picker-help{color:var(--success);}
+.music-picker.is-invalid .music-picker-control .cinput{border-color:var(--red);background:rgba(212,43,43,.04);}
+.manual-song-entry{margin-top:12px;color:var(--ink3);font-family:var(--fm);font-size:10px;letter-spacing:.06em;}
+.manual-song-entry summary{width:max-content;max-width:100%;cursor:pointer;color:var(--ink2);text-transform:uppercase;}
+.manual-song-entry summary::marker{color:var(--red);}
+.manual-song-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:12px;}
+.manual-song-fields label{margin:0!important;font-size:8px!important;}
+.manual-song-fields .cinput{min-width:0;}
+@media (max-width:560px){.manual-song-fields{grid-template-columns:1fr;gap:8px;}.music-picker-option{padding:13px 14px;}}
+
 /* Checkbox anónimo */
 .anon-row{
   display:flex;align-items:flex-start;gap:10px;

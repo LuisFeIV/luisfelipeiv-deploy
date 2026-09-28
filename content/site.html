@@ -434,17 +434,30 @@
                         placeholder="Tu nombre o apodo"/>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-            <div class="cfield">
-              <label for="b-cancion">La canción <span style="color:var(--red)">*</span></label>
-            <input class="cinput" type="text" id="b-cancion" name="song"
-                     placeholder="Título..." required aria-required="true"/>
+          <div class="cfield music-picker" data-music-picker>
+            <label for="b-cancion">Busca una canción <span style="color:var(--red)">*</span></label>
+            <input type="hidden" name="song" data-music-song/>
+            <input type="hidden" name="artist" data-music-artist/>
+            <input type="hidden" name="spotifyTrackId" data-music-track-id/>
+            <input type="hidden" name="spotifyUrl" data-music-url/>
+            <div class="music-picker-control">
+              <input class="cinput" type="search" id="b-cancion" data-music-query
+                     placeholder="Título o artista..." autocomplete="off" role="combobox"
+                     aria-autocomplete="list" aria-controls="b-resultados" aria-expanded="false"
+                     aria-describedby="b-cancion-ayuda"/>
+              <button class="music-picker-clear" type="button" data-music-clear hidden aria-label="Cambiar canción">×</button>
             </div>
-            <div class="cfield">
-              <label for="b-artista">El artista <span style="color:var(--red)">*</span></label>
-            <input class="cinput" type="text" id="b-artista" name="artist"
-                     placeholder="¿Quién la canta?" required aria-required="true"/>
-            </div>
+            <div class="music-picker-results" id="b-resultados" data-music-results role="listbox" aria-label="Resultados de Spotify"></div>
+            <p class="music-picker-help" id="b-cancion-ayuda" data-music-help>Escribe para buscar en Spotify.</p>
+            <details class="manual-song-entry" data-music-manual>
+              <summary>¿No la encuentras? Escríbela manualmente</summary>
+              <div class="manual-song-fields">
+                <label for="b-cancion-manual">Canción</label>
+                <input class="cinput" type="text" id="b-cancion-manual" data-music-manual-song placeholder="Título..."/>
+                <label for="b-artista-manual">Artista</label>
+                <input class="cinput" type="text" id="b-artista-manual" data-music-manual-artist placeholder="¿Quién la canta?"/>
+              </div>
+            </details>
           </div>
 
           <div class="cfield">
@@ -511,17 +524,30 @@
             No enviaremos correos ni contactaremos a la otra persona: tú decides cómo compartir tu dedicatoria.
           </p>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-            <div class="cfield">
-              <label for="d-cancion">La canción <span style="color:var(--red)">*</span></label>
-              <input class="cinput" type="text" id="d-cancion" name="song"
-                     placeholder="Título..." required aria-required="true"/>
+          <div class="cfield music-picker" data-music-picker>
+            <label for="d-cancion">Busca una canción <span style="color:var(--red)">*</span></label>
+            <input type="hidden" name="song" data-music-song/>
+            <input type="hidden" name="artist" data-music-artist/>
+            <input type="hidden" name="spotifyTrackId" data-music-track-id/>
+            <input type="hidden" name="spotifyUrl" data-music-url/>
+            <div class="music-picker-control">
+              <input class="cinput" type="search" id="d-cancion" data-music-query
+                     placeholder="Título o artista..." autocomplete="off" role="combobox"
+                     aria-autocomplete="list" aria-controls="d-resultados" aria-expanded="false"
+                     aria-describedby="d-cancion-ayuda"/>
+              <button class="music-picker-clear" type="button" data-music-clear hidden aria-label="Cambiar canción">×</button>
             </div>
-            <div class="cfield">
-              <label for="d-artista">El artista <span style="color:var(--red)">*</span></label>
-              <input class="cinput" type="text" id="d-artista" name="artist"
-                     placeholder="¿Quién la canta?" required aria-required="true"/>
-            </div>
+            <div class="music-picker-results" id="d-resultados" data-music-results role="listbox" aria-label="Resultados de Spotify"></div>
+            <p class="music-picker-help" id="d-cancion-ayuda" data-music-help>Escribe para buscar en Spotify.</p>
+            <details class="manual-song-entry" data-music-manual>
+              <summary>¿No la encuentras? Escríbela manualmente</summary>
+              <div class="manual-song-fields">
+                <label for="d-cancion-manual">Canción</label>
+                <input class="cinput" type="text" id="d-cancion-manual" data-music-manual-song placeholder="Título..."/>
+                <label for="d-artista-manual">Artista</label>
+                <input class="cinput" type="text" id="d-artista-manual" data-music-manual-artist placeholder="¿Quién la canta?"/>
+              </div>
+            </details>
           </div>
 
           <div class="cfield">

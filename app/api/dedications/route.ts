@@ -43,6 +43,8 @@ export async function POST(request: Request) {
       recipient_name: dedication.recipientName ?? null,
       sender_name: dedication.senderName ?? null,
       song: dedication.song,
+      spotify_track_id: dedication.spotifyTrackId ?? null,
+      spotify_url: dedication.spotifyUrl ?? null,
     });
 
     if (error) {

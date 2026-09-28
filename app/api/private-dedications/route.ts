@@ -67,6 +67,8 @@ export async function POST(request: Request) {
       sender_name: dedication.senderName ?? null,
       share_token_hash: hashShareToken(shareToken),
       song: dedication.song,
+      spotify_track_id: dedication.spotifyTrackId ?? null,
+      spotify_url: dedication.spotifyUrl ?? null,
     });
 
     if (error) {
