@@ -6,12 +6,74 @@ import { adminSessionCookieName, hasValidAdminSession } from "@/lib/admin-auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { DedicationStatus } from "@/lib/supabase/database.types";
 
+const statusFilterValues = [
+  "all",
+  "pending",
+  "approved",
+  "published",
+  "rejected",
+] as const;
+
+const permissionFilterValues = ["all", "authorized"] as const;
+
+type StatusFilter = (typeof statusFilterValues)[number];
+type PermissionFilter = (typeof permissionFilterValues)[number];
+
 const statusLabels: Record<DedicationStatus, string> = {
   approved: "Aprobada",
   pending: "Pendiente",
   published: "Publicada",
   rejected: "No publicada",
 };
+
+const filterLabels: Record<StatusFilter, string> = {
+  all: "Todas",
+  approved: "Aprobadas",
+  pending: "Pendientes",
+  published: "Publicadas",
+  rejected: "No publicadas",
+};
+
+type AdminDedicationsPageProps = {
+  searchParams: Promise<{
+    error?: string;
+    permission?: string;
+    status?: string;
+    updated?: string;
+  }>;
+};
+
+function getStatusFilter(value: string | undefined): StatusFilter {
+  if (statusFilterValues.some((filter) => filter === value)) {
+    return value as StatusFilter;
+  }
+
+  return "all";
+}
+
+function getPermissionFilter(value: string | undefined): PermissionFilter {
+  if (permissionFilterValues.some((filter) => filter === value)) {
+    return value as PermissionFilter;
+  }
+
+  return "all";
+}
+
+function getFilterUrl(status: StatusFilter, permission: PermissionFilter) {
+  const searchParams = new URLSearchParams();
+
+  if (status !== "all") {
+    searchParams.set("status", status);
+  }
+
+  if (permission !== "all") {
+    searchParams.set("permission", permission);
+  }
+
+  const query = searchParams.toString();
+
+  return query ? `/admin/dedicatorias?${query}` : "/admin/dedicatorias";
+}
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("es-MX", {
@@ -25,14 +87,27 @@ function getInstagramUrl(value: string) {
   return `https://www.instagram.com/${value.replace(/^@/, "")}`;
 }
 
-async function getDedications() {
+async function getDedications(
+  statusFilter: StatusFilter,
+  permissionFilter: PermissionFilter,
+) {
   try {
     const supabase = createSupabaseServerClient();
-    const { data, error } = await supabase
+    let query = supabase
       .from("dedications")
       .select(
         "id, sender_name, recipient_name, song, artist, message, instagram, allow_publishing, status, created_at",
-      )
+      );
+
+    if (statusFilter !== "all") {
+      query = query.eq("status", statusFilter);
+    }
+
+    if (permissionFilter === "authorized") {
+      query = query.eq("allow_publishing", true);
+    }
+
+    const { data, error } = await query
       .order("created_at", { ascending: false })
       .limit(100);
 
@@ -50,7 +125,9 @@ async function getDedications() {
   }
 }
 
-export default async function AdminDedicationsPage() {
+export default async function AdminDedicationsPage({
+  searchParams,
+}: AdminDedicationsPageProps) {
   const cookieStore = await cookies();
   const token = cookieStore.get(adminSessionCookieName)?.value;
 
@@ -58,7 +135,15 @@ export default async function AdminDedicationsPage() {
     redirect("/admin/login");
   }
 
-  const { dedications, hasError } = await getDedications();
+  const parameters = await searchParams;
+  const statusFilter = getStatusFilter(parameters.status);
+  const permissionFilter = getPermissionFilter(parameters.permission);
+  const { dedications, hasError } = await getDedications(
+    statusFilter,
+    permissionFilter,
+  );
+  const hasActiveFilters =
+    statusFilter !== "all" || permissionFilter !== "all";
 
   return (
     <main className={styles.adminShell}>
@@ -69,8 +154,8 @@ export default async function AdminDedicationsPage() {
             Dedicatorias recibidas
           </h1>
           <p className={styles.copy}>
-            Las 100 historias más recientes, ordenadas de la más nueva a la más
-            antigua.
+            {dedications.length} historia{dedications.length === 1 ? "" : "s"} ·
+            mostrando hasta 100, de la más nueva a la más antigua.
           </p>
         </div>
         <form action="/api/admin/logout" method="post">
@@ -79,6 +164,64 @@ export default async function AdminDedicationsPage() {
           </button>
         </form>
       </header>
+
+      <nav aria-label="Filtros de dedicatorias" className={styles.filters}>
+        <div className={styles.filterGroup}>
+          <p className={styles.filterLabel}>Estado</p>
+          <div className={styles.filterOptions}>
+            {statusFilterValues.map((filter) => (
+              <a
+                aria-current={statusFilter === filter ? "page" : undefined}
+                className={
+                  statusFilter === filter
+                    ? `${styles.filterLink} ${styles.filterLinkActive}`
+                    : styles.filterLink
+                }
+                href={getFilterUrl(filter, permissionFilter)}
+                key={filter}
+              >
+                {filterLabels[filter]}
+              </a>
+            ))}
+          </div>
+        </div>
+        <div className={styles.filterGroup}>
+          <p className={styles.filterLabel}>Autorización</p>
+          <div className={styles.filterOptions}>
+            <a
+              aria-current={permissionFilter === "all" ? "page" : undefined}
+              className={
+                permissionFilter === "all"
+                  ? `${styles.filterLink} ${styles.filterLinkActive}`
+                  : styles.filterLink
+              }
+              href={getFilterUrl(statusFilter, "all")}
+            >
+              Todas
+            </a>
+            <a
+              aria-current={
+                permissionFilter === "authorized" ? "page" : undefined
+              }
+              className={
+                permissionFilter === "authorized"
+                  ? `${styles.filterLink} ${styles.filterLinkActive}`
+                  : styles.filterLink
+              }
+              href={getFilterUrl(statusFilter, "authorized")}
+            >
+              Con permiso para contenido
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {parameters.error ? (
+        <section className={styles.errorState} role="alert">
+          <h2>No pudimos actualizar el estado.</h2>
+          <p>Actualiza la página e inténtalo de nuevo.</p>
+        </section>
+      ) : null}
 
       {hasError ? (
         <section className={styles.errorState} role="alert">
@@ -89,8 +232,21 @@ export default async function AdminDedicationsPage() {
 
       {!hasError && dedications.length === 0 ? (
         <section className={styles.emptyState}>
-          <h2>Aún no hay dedicatorias.</h2>
-          <p>Cuando alguien comparta una historia desde el sitio, aparecerá aquí.</p>
+          <h2>
+            {hasActiveFilters
+              ? "No hay historias con estos filtros."
+              : "Aún no hay dedicatorias."}
+          </h2>
+          <p>
+            {hasActiveFilters
+              ? "Ajusta los filtros para ver otras historias."
+              : "Cuando alguien comparta una historia desde el sitio, aparecerá aquí."}
+          </p>
+          {hasActiveFilters ? (
+            <a className={styles.resetFilters} href="/admin/dedicatorias">
+              Ver todas las dedicatorias
+            </a>
+          ) : null}
         </section>
       ) : null}
 
@@ -100,7 +256,11 @@ export default async function AdminDedicationsPage() {
           className={styles.dedicationList}
         >
           {dedications.map((dedication) => (
-            <article className={styles.dedicationCard} key={dedication.id}>
+            <article
+              className={styles.dedicationCard}
+              id={`dedication-${dedication.id}`}
+              key={dedication.id}
+            >
               <div className={styles.cardHeader}>
                 <p className={styles.date}>{formatDate(dedication.created_at)}</p>
                 <p className={styles.status}>{statusLabels[dedication.status]}</p>
@@ -137,6 +297,46 @@ export default async function AdminDedicationsPage() {
                   </div>
                 ) : null}
               </dl>
+              <form
+                action="/api/admin/dedications/update"
+                className={styles.statusForm}
+                method="post"
+              >
+                <input name="id" type="hidden" value={dedication.id} />
+                <input
+                  name="filterStatus"
+                  type="hidden"
+                  value={statusFilter}
+                />
+                <input
+                  name="filterPermission"
+                  type="hidden"
+                  value={permissionFilter}
+                />
+                <label className={styles.statusLabel} htmlFor={`status-${dedication.id}`}>
+                  Estado de revisión
+                </label>
+                <select
+                  className={styles.statusSelect}
+                  defaultValue={dedication.status}
+                  id={`status-${dedication.id}`}
+                  name="status"
+                >
+                  {Object.entries(statusLabels).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+                <button className={styles.saveStatusButton} type="submit">
+                  Guardar estado
+                </button>
+              </form>
+              {parameters.updated === dedication.id ? (
+                <p className={styles.updatedMessage} role="status">
+                  Estado actualizado.
+                </p>
+              ) : null}
             </article>
           ))}
         </section>

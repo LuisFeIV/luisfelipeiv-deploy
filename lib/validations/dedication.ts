@@ -38,6 +38,11 @@ export const dedicationStatusSchema = z.enum([
   "published",
 ]);
 
+export const adminDedicationStatusUpdateSchema = z.object({
+  id: z.uuid("La dedicatoria seleccionada no es válida."),
+  status: dedicationStatusSchema,
+});
+
 export const dedicationSubmissionSchema = z.object({
   senderName: optionalText(MAX_NAME_LENGTH),
   recipientName: optionalText(MAX_NAME_LENGTH),

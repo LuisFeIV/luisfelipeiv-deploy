@@ -129,6 +129,58 @@
   margin-top: 32px;
 }
 
+.filters {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--w3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 40px;
+  padding: 24px 0;
+}
+
+.filterGroup {
+  display: grid;
+  gap: 8px;
+}
+
+.filterLabel,
+.statusLabel {
+  color: var(--ink3);
+  font-family: var(--fm);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.filterOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filterLink {
+  border: 1px solid var(--w3);
+  border-radius: 999px;
+  color: var(--ink2);
+  font-family: var(--fm);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  min-height: 38px;
+  padding: 9px 13px;
+  transition: background 180ms var(--ease), color 180ms var(--ease);
+}
+
+.filterLink:hover,
+.filterLink:focus-visible {
+  border-color: var(--red);
+}
+
+.filterLinkActive {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--w);
+}
+
 .dedicationCard,
 .emptyState,
 .errorState {
@@ -206,9 +258,78 @@
   text-underline-offset: 3px;
 }
 
+.statusForm {
+  align-items: end;
+  border-top: 1px solid var(--w3);
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  margin-top: 26px;
+  padding-top: 20px;
+}
+
+.statusLabel {
+  grid-column: 1 / -1;
+}
+
+.statusSelect {
+  background: var(--w);
+  border: 1px solid var(--w3);
+  border-radius: 8px;
+  color: var(--ink);
+  font: inherit;
+  min-height: 44px;
+  padding: 0 10px;
+}
+
+.statusSelect:focus-visible,
+.filterLink:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+.saveStatusButton {
+  background: var(--red);
+  border-radius: 999px;
+  color: var(--w);
+  font-family: var(--fm);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  min-height: 44px;
+  padding: 0 16px;
+  transition: background 180ms var(--ease);
+}
+
+.saveStatusButton:hover,
+.saveStatusButton:focus-visible {
+  background: var(--red2);
+}
+
+.saveStatusButton:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 2px;
+}
+
+.updatedMessage {
+  color: var(--red2);
+  font-size: 14px;
+  margin-top: 12px;
+}
+
 .emptyState,
 .errorState {
   margin-top: 32px;
+}
+
+.resetFilters {
+  color: var(--red2);
+  display: inline-block;
+  font-family: var(--fm);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  margin-top: 18px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .emptyState h2,
@@ -256,6 +377,11 @@
 
   .details {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .statusForm {
+    align-items: stretch;
+    grid-template-columns: 1fr;
   }
 
   .dedicationCard,
