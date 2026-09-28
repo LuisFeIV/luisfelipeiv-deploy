@@ -263,26 +263,55 @@
   border-top: 1px solid var(--w3);
   display: grid;
   gap: 10px;
-  grid-template-columns: minmax(180px, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   margin-top: 26px;
   padding-top: 20px;
 }
 
-.statusLabel {
-  grid-column: 1 / -1;
+.statusChoices {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
 }
 
-.statusSelect {
-  background: var(--w);
+.statusOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.statusOption {
+  cursor: pointer;
+  position: relative;
+}
+
+.statusOption input {
+  opacity: 0;
+  position: absolute;
+}
+
+.statusOption span {
+  align-items: center;
   border: 1px solid var(--w3);
-  border-radius: 8px;
-  color: var(--ink);
-  font: inherit;
+  border-radius: 999px;
+  color: var(--ink2);
+  display: flex;
+  font-family: var(--fm);
+  font-size: 12px;
+  letter-spacing: 0.02em;
   min-height: 44px;
-  padding: 0 10px;
+  padding: 0 14px;
 }
 
-.statusSelect:focus-visible,
+.statusOption input:checked + span {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--w);
+}
+
+.statusOption input:focus-visible + span,
 .filterLink:focus-visible {
   outline: 2px solid var(--red);
   outline-offset: 2px;
@@ -311,9 +340,13 @@
 }
 
 .updatedMessage {
-  color: var(--red2);
+  background: var(--success-soft);
+  border: 1px solid var(--success);
+  border-radius: 8px;
+  color: var(--success);
   font-size: 14px;
   margin-top: 12px;
+  padding: 8px 10px;
 }
 
 .emptyState,
@@ -382,6 +415,16 @@
   .statusForm {
     align-items: stretch;
     grid-template-columns: 1fr;
+  }
+
+  .statusOptions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .statusOption span {
+    justify-content: center;
+    padding: 0 8px;
   }
 
   .dedicationCard,

@@ -313,28 +313,29 @@ export default async function AdminDedicationsPage({
                   type="hidden"
                   value={permissionFilter}
                 />
-                <label className={styles.statusLabel} htmlFor={`status-${dedication.id}`}>
-                  Estado de revisión
-                </label>
-                <select
-                  className={styles.statusSelect}
-                  defaultValue={dedication.status}
-                  id={`status-${dedication.id}`}
-                  name="status"
-                >
-                  {Object.entries(statusLabels).map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
+                <fieldset className={styles.statusChoices}>
+                  <legend className={styles.statusLabel}>Estado de revisión</legend>
+                  <div className={styles.statusOptions}>
+                    {Object.entries(statusLabels).map(([value, label]) => (
+                      <label className={styles.statusOption} key={value}>
+                        <input
+                          defaultChecked={dedication.status === value}
+                          name="status"
+                          type="radio"
+                          value={value}
+                        />
+                        <span>{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
                 <button className={styles.saveStatusButton} type="submit">
                   Guardar estado
                 </button>
               </form>
               {parameters.updated === dedication.id ? (
                 <p className={styles.updatedMessage} role="status">
-                  Estado actualizado.
+                  Estado actualizado correctamente.
                 </p>
               ) : null}
             </article>
