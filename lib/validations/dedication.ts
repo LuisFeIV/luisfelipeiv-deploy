@@ -66,5 +66,33 @@ export const dedicationSubmissionSchema = z.object({
   website: z.string().max(0, "Solicitud rechazada.").optional().default(""),
 });
 
+export const privateDedicationSubmissionSchema = z.object({
+  artist: z
+    .string()
+    .trim()
+    .min(1, "Indica el artista.")
+    .max(MAX_ARTIST_LENGTH),
+  message: z
+    .string()
+    .trim()
+    .min(1, "Escribe un mensaje para esa persona.")
+    .max(MAX_MESSAGE_LENGTH),
+  recipientName: z
+    .string()
+    .trim()
+    .min(1, "Indica para quién es la dedicatoria.")
+    .max(MAX_NAME_LENGTH),
+  senderName: optionalText(MAX_NAME_LENGTH),
+  song: z
+    .string()
+    .trim()
+    .min(1, "Indica la canción.")
+    .max(MAX_SONG_LENGTH),
+  website: z.string().max(0, "Solicitud rechazada.").optional().default(""),
+});
+
 export type DedicationSubmission = z.infer<typeof dedicationSubmissionSchema>;
 export type DedicationStatus = z.infer<typeof dedicationStatusSchema>;
+export type PrivateDedicationSubmission = z.infer<
+  typeof privateDedicationSubmissionSchema
+>;

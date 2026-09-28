@@ -208,6 +208,141 @@ function resetDedicationForm() {
 submitDedicationForm();
 submitForm('nlForm','nlBtn','nlForm','nlOk');
 
+let privateDedicationUrl = '';
+
+function setCopyButtonLabel(label) {
+  const button = document.querySelector('#dedicarOk .btn-share-secondary[type="button"]');
+  if (!button) return;
+
+  button.textContent = label;
+}
+
+async function copyPrivateDedicationLink() {
+  if (!privateDedicationUrl) return;
+
+  try {
+    await navigator.clipboard.writeText(privateDedicationUrl);
+  } catch {
+    const input = document.getElementById('dedicarShareUrl');
+    input.focus();
+    input.select();
+    document.execCommand('copy');
+  }
+
+  setCopyButtonLabel('Enlace copiado');
+  window.setTimeout(() => setCopyButtonLabel('Copiar enlace'), 2200);
+}
+
+async function sharePrivateDedication() {
+  if (!privateDedicationUrl) return;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Tienes una canción dedicada',
+        text: 'Te hice una dedicatoria musical.',
+        url: privateDedicationUrl,
+      });
+      return;
+    } catch {
+      return;
+    }
+  }
+
+  await copyPrivateDedicationLink();
+}
+
+function submitPrivateDedicationForm() {
+  const form = document.getElementById('dedicarForm');
+  const button = document.getElementById('dedicarBtn');
+  const success = document.getElementById('dedicarOk');
+  const linkInput = document.getElementById('dedicarShareUrl');
+  const whatsApp = document.getElementById('dedicarWhatsApp');
+
+  if (!form || !button || !success || !linkInput || !whatsApp) return;
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    let valid = true;
+    form.querySelectorAll('[required]').forEach(field => {
+      field.classList.remove('err');
+      if (!field.value.trim()) {
+        field.classList.add('err');
+        valid = false;
+      }
+    });
+
+    if (!valid) {
+      form.querySelector('.err').focus();
+      return;
+    }
+
+    const formData = new FormData(form);
+    const value = name => String(formData.get(name) ?? '');
+    const originalButton = button.innerHTML;
+
+    button.disabled = true;
+    button.textContent = 'Creando...';
+
+    try {
+      const response = await fetch('/api/private-dedications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          artist: value('artist'),
+          message: value('message'),
+          recipientName: value('recipientName'),
+          senderName: value('senderName'),
+          song: value('song'),
+          website: value('bot-field-d'),
+        }),
+      });
+      const payload = await response.json();
+
+      if (!response.ok || typeof payload.sharePath !== 'string') {
+        throw new Error('Unable to create private dedication.');
+      }
+
+      privateDedicationUrl = new URL(payload.sharePath, window.location.origin).toString();
+      linkInput.value = privateDedicationUrl;
+      whatsApp.href = `https://wa.me/?text=${encodeURIComponent(`Te hice una dedicatoria musical. ${privateDedicationUrl}`)}`;
+      form.style.display = 'none';
+      success.style.display = 'block';
+
+      requestAnimationFrame(() => {
+        success.focus({ preventScroll: true });
+        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    } catch {
+      button.disabled = false;
+      button.innerHTML = originalButton;
+      alert('No pudimos crear tu dedicatoria. Inténtalo de nuevo.');
+    }
+  });
+}
+
+function resetPrivateDedicationForm() {
+  const form = document.getElementById('dedicarForm');
+  const success = document.getElementById('dedicarOk');
+  const song = document.getElementById('d-cancion');
+  const linkInput = document.getElementById('dedicarShareUrl');
+
+  if (!form || !success) return;
+
+  privateDedicationUrl = '';
+  form.reset();
+  form.style.display = '';
+  success.style.display = 'none';
+  if (linkInput) linkInput.value = '';
+  setCopyButtonLabel('Copiar enlace');
+
+  requestAnimationFrame(() => {
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    song && song.focus({ preventScroll: true });
+  });
+}
+
 /* ── Carrusel about ── */
 let carouselIdx = 0;
 const slides = document.getElementById('aboutSlides');
@@ -266,7 +401,7 @@ function switchTab(tab) {
 }
 
 /* ── Form dedicar ── */
-submitForm('dedicarForm','dedicarBtn','dedicarForm','dedicarOk');
+submitPrivateDedicationForm();
 
 Object.assign(window, {
   menuOpen,
@@ -274,6 +409,9 @@ Object.assign(window, {
   carouselGo,
   carouselPrev,
   carouselNext,
+  copyPrivateDedicationLink,
   resetDedicationForm,
+  resetPrivateDedicationForm,
+  sharePrivateDedication,
   switchTab,
 });

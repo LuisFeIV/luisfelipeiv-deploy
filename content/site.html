@@ -10,7 +10,7 @@
     <li><a href="#redes">Redes</a></li>
   </ul>
   <div class="nav-cta-wrap">
-    <a href="#buzon" class="nav-buzon-btn" aria-label="Dedicar una canción">
+    <a href="#buzon" class="nav-buzon-btn" aria-label="Dedicar una canción" onclick="switchTab('dedicar')">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       Dedicar canción
     </a>
@@ -498,9 +498,7 @@
       <!-- FORM: COMPARTIR DEDICATORIA -->
       <form class="carta" id="dedicarForm" style="display:none"
             name="dedicar-cancion" method="POST"
-            data-netlify="true" data-netlify-honeypot="bot-field-d"
             novalidate>
-        <input type="hidden" name="form-name" value="dedicar-cancion"/>
         <div style="display:none"><input name="bot-field-d"/></div>
 
         <div class="carta-top" style="background:var(--ink);">
@@ -558,8 +556,17 @@
 
       <div class="buzon-ok" id="dedicarOk" style="display:none" role="alert" aria-live="polite" tabindex="-1">
         <div class="ok-icon">♥</div>
-        <h3>Dedicatoria creada.</h3>
-        <p>Podrás compartirla por el medio que prefieras.</p>
+        <h3>Tu dedicatoria está lista.</h3>
+        <p>Compártela por el medio que prefieras. No enviaremos correos ni contactaremos a la otra persona.</p>
+        <label class="share-link-label" for="dedicarShareUrl">Tu enlace privado</label>
+        <input class="share-link-input" id="dedicarShareUrl" type="text" readonly aria-describedby="dedicarShareHelp"/>
+        <p class="share-link-help" id="dedicarShareHelp">Cualquier persona con este enlace podrá ver la dedicatoria.</p>
+        <div class="share-actions">
+          <button class="btn-share-primary" type="button" onclick="sharePrivateDedication()">Compartir</button>
+          <button class="btn-share-secondary" type="button" onclick="copyPrivateDedicationLink()">Copiar enlace</button>
+          <a class="btn-share-secondary" id="dedicarWhatsApp" href="#" target="_blank" rel="noreferrer">WhatsApp</a>
+        </div>
+        <button type="button" class="btn-otra" onclick="resetPrivateDedicationForm()">Crear otra dedicatoria</button>
       </div>
     </div>
   </div>

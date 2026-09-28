@@ -49,6 +49,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      private_dedications: {
+        Row: {
+          artist: string;
+          created_at: string;
+          id: string;
+          message: string;
+          recipient_name: string;
+          sender_name: string | null;
+          share_token_hash: string;
+          song: string;
+        };
+        Insert: {
+          artist: string;
+          created_at?: string;
+          id?: string;
+          message: string;
+          recipient_name: string;
+          sender_name?: string | null;
+          share_token_hash: string;
+          song: string;
+        };
+        Update: {
+          artist?: string;
+          created_at?: string;
+          id?: string;
+          message?: string;
+          recipient_name?: string;
+          sender_name?: string | null;
+          share_token_hash?: string;
+          song?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
