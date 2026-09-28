@@ -10,6 +10,7 @@ export default async function HomePage() {
   return (
     <>
       <StaticSite markup={markup} />
+      <script defer src="https://f.convertkit.com/ckjs/ck.5.js" />
       <script defer src="/site-interactions.js" />
     </>
   );

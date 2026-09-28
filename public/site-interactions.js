@@ -86,40 +86,15 @@ document.querySelectorAll('.gcard').forEach(card => {
 });
 
 /* ── Form helpers ── */
-function submitForm(formId, btnId, formEl, successId) {
-  const form = document.getElementById(formId);
-  const btn  = document.getElementById(btnId);
-  const ok   = document.getElementById(successId);
-  if(!form) return;
+function initializeNewsletterForm() {
+  const form = document.getElementById('nlForm');
+  const ok = document.getElementById('nlOk');
+  if (!form || !ok) return;
 
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    let valid=true;
-    form.querySelectorAll('[required]').forEach(f => {
-      f.classList.remove('err');
-      if(!f.value.trim()){ f.classList.add('err'); valid=false; }
-    });
-    if(!valid){ form.querySelector('.err').focus(); return; }
-
-    const orig = btn.innerHTML;
-    btn.disabled=true;
-    btn.textContent='Enviando...';
-
-    fetch('/', {
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body: new URLSearchParams(new FormData(form)).toString()
-    })
-    .then(() => {
-      form.style.display='none';
-      ok.style.display='block';
-      ok.focus();
-    })
-    .catch(() => {
-      btn.disabled=false;
-      btn.innerHTML=orig;
-      alert('Error al enviar — intenta de nuevo.');
-    });
+  form.addEventListener('ckjs:submission:complete', () => {
+    form.style.display = 'none';
+    ok.style.display = 'block';
+    ok.focus();
   });
 }
 
@@ -383,7 +358,7 @@ function validateMusicPicker(form) {
 document.querySelectorAll('[data-music-picker]').forEach(setupMusicPicker);
 
 submitDedicationForm();
-submitForm('nlForm','nlBtn','nlForm','nlOk');
+initializeNewsletterForm();
 
 let privateDedicationUrl = '';
 

@@ -991,6 +991,7 @@ button{font-family:var(--fb);cursor:pointer;border:none;background:none;
 .nl-in .sub{color:#8A8478;margin:0 auto 32px;}
 
 .nl-form{display:flex;gap:14px;flex-wrap:wrap;}
+.nl-fields{display:flex;gap:14px;flex:1;flex-wrap:wrap;}
 .nl-input{
   flex:1;min-width:220px;height:56px;min-height:56px;
   background:#24211D;border:1.5px solid #4A443B;
@@ -1012,6 +1013,14 @@ button{font-family:var(--fb);cursor:pointer;border:none;background:none;
 }
 .btn-nl:hover{background:var(--red2);transform:translateY(-1px);}
 .nl-aviso{font-size:11px;color:#5A5450;margin-top:12px;line-height:1.5;}
+.nl-errors{
+  display:none;width:100%;margin:0;
+  padding:10px 14px;list-style:none;
+  border:1px solid var(--red);border-radius:10px;
+  color:#FFD0D0;background:rgba(212,43,43,.15);
+  font-size:13px;line-height:1.4;
+}
+.nl-errors:not(:empty){display:block;}
 .nl-ok{
   display:none;text-align:center;
   font-family:var(--fd);font-size:20px;
@@ -1100,7 +1109,7 @@ footer{
   #redes .links-g{grid-template-columns:1fr;gap:8px;margin-top:24px;}
   #redes .lcard{min-height:64px;padding:12px 14px;gap:10px;}
   #redes .lcard .ico{width:36px;height:36px;}
-  .nl-form{flex-direction:column;}
+  .nl-form,.nl-fields{flex-direction:column;}
   .btn-nl{width:100%;justify-content:center;}
 
   footer{
