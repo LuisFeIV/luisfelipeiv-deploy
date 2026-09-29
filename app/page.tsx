@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import Script from "next/script";
 
 import { StaticSite } from "@/components/static-site";
 
@@ -10,8 +11,8 @@ export default async function HomePage() {
   return (
     <>
       <StaticSite markup={markup} />
-      <script defer src="https://f.convertkit.com/ckjs/ck.5.js" />
-      <script defer src="/site-interactions.js" />
+      <Script src="https://f.convertkit.com/ckjs/ck.5.js" strategy="afterInteractive" />
+      <Script src="/site-interactions.js" strategy="afterInteractive" />
     </>
   );
 }
