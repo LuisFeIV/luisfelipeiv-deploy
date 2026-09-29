@@ -1,0 +1,145 @@
+.page {
+  align-items: center;
+  background: var(--w);
+  display: flex;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 24px;
+}
+
+.card {
+  background: var(--w);
+  border: 1px solid var(--w3);
+  border-radius: 18px;
+  box-shadow: 0 20px 45px rgba(20, 18, 16, 0.08);
+  max-width: 620px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.top {
+  align-items: center;
+  background: var(--ink);
+  color: var(--w);
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 24px;
+}
+
+.brand {
+  font-family: var(--fd);
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 700;
+}
+
+.brand span {
+  color: var(--red);
+}
+
+.mark {
+  align-items: center;
+  border: 1px solid rgba(247, 243, 236, 0.35);
+  border-radius: 50%;
+  display: flex;
+  font-family: var(--fd);
+  font-size: 20px;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+.body {
+  padding: 40px 32px;
+}
+
+.eyebrow {
+  color: var(--red);
+  font-family: var(--fm);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: var(--fd);
+  font-size: clamp(38px, 8vw, 62px);
+  line-height: 0.98;
+  margin-top: 12px;
+}
+
+.title span {
+  color: var(--red);
+  font-style: italic;
+}
+
+.song {
+  border-top: 1px solid var(--w3);
+  font-family: var(--fd);
+  font-size: clamp(26px, 5vw, 38px);
+  line-height: 1.1;
+  margin-top: 34px;
+  padding-top: 28px;
+}
+
+.artist {
+  color: var(--red);
+  font-family: var(--fm);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+
+.spotifyPlayer {
+  border: 0;
+  border-radius: 12px;
+  height: 152px;
+  margin-top: 24px;
+  width: 100%;
+}
+
+.message {
+  color: var(--ink2);
+  font-size: 18px;
+  line-height: 1.75;
+  margin-top: 28px;
+  white-space: pre-wrap;
+}
+
+.sender {
+  border-top: 1px solid var(--w3);
+  color: var(--ink3);
+  font-size: 14px;
+  margin-top: 32px;
+  padding-top: 20px;
+}
+
+.sender strong {
+  color: var(--ink);
+  font-family: var(--fd);
+  font-size: 18px;
+}
+
+.privacy {
+  color: var(--ink3);
+  font-family: var(--fm);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  margin-top: 34px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 14px;
+  }
+
+  .top {
+    padding: 16px 20px;
+  }
+
+  .body {
+    padding: 32px 24px;
+  }
+}

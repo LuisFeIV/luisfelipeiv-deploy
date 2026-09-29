@@ -1,0 +1,696 @@
+<a class="skip" href="#main">Saltar al contenido</a>
+
+<!-- NAV -->
+<nav class="nav" id="nav" role="navigation" aria-label="Navegación principal">
+  <a href="#" class="nav-logo" aria-label="Luis Felipe IV">Luis<span class="dot">·</span>Felipe IV</a>
+  <ul class="nav-links" role="list">
+    <li><a href="#archivo">El Archivo</a></li>
+    <li><a href="#entrecanciones">Entrecanciones</a></li>
+    <li><a href="#buzon">Buzón</a></li>
+    <li><a href="#redes">Redes</a></li>
+  </ul>
+  <div class="nav-cta-wrap">
+    <a href="#buzon" class="nav-buzon-btn" aria-label="Dedicar una canción" onclick="switchTab('dedicar')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Dedicar canción
+    </a>
+    <button class="nav-burger" onclick="menuOpen()" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Cinta roja -->
+<div class="tape-wrap" aria-hidden="true">
+  <div class="tape-track">
+    <span>Historias musicales</span><span class="sep">·</span>
+    <span>José José</span><span class="sep">·</span>
+    <span>Frank Ocean</span><span class="sep">·</span>
+    <span>Coldplay</span><span class="sep">·</span>
+    <span>The Marías</span><span class="sep">·</span>
+    <span>Alvarito Díaz</span><span class="sep">·</span>
+    <span>Josean Log</span><span class="sep">·</span>
+    <span>Canciones que se sienten</span><span class="sep">·</span>
+    <span>Historias musicales</span><span class="sep">·</span>
+    <span>José José</span><span class="sep">·</span>
+    <span>Frank Ocean</span><span class="sep">·</span>
+    <span>Coldplay</span><span class="sep">·</span>
+    <span>The Marías</span><span class="sep">·</span>
+    <span>Alvarito Díaz</span><span class="sep">·</span>
+    <span>Josean Log</span><span class="sep">·</span>
+    <span>Canciones que se sienten</span><span class="sep">·</span>
+  </div>
+</div>
+
+<!-- Mobile menu -->
+<div class="mob" id="mobMenu" role="dialog" aria-modal="true">
+  <button class="mob-x" onclick="menuClose()" aria-label="Cerrar">✕</button>
+  <a href="#archivo" onclick="menuClose()">El Archivo</a>
+  <a href="#buzon" onclick="menuClose()">Buzón</a>
+  <a href="#redes" onclick="menuClose()">Redes</a>
+</div>
+
+<main id="main">
+
+<!-- ══ HERO ══ -->
+<section class="hero" aria-label="Presentación">
+  <div class="hero-bg">
+    <img src="/images/site-1.jpg"
+         alt="Luis Felipe IV — retrato"
+         fetchpriority="high"/>
+  </div>
+
+  <!-- Nombre gigante fantasma -->
+  <div class="hero-name" id="heroName" aria-hidden="true">Luis&nbsp;Felipe&nbsp;IV</div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Luis Felipe IV · Historias musicales</p>
+    <h1>
+      Las canciones<br>
+      que te <em>marcaron.</em>
+    </h1>
+    <p class="hero-sub">
+      Cuento lo que hay detrás de las canciones que más te han dolido, alegrado y acompañado — desde José José hasta Frank Ocean.
+    </p>
+    <div class="hero-acts">
+      <a href="#archivo" class="btn-p">
+        Ver el Archivo
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#buzon" class="btn-g">
+        Escribirme ✉
+      </a>
+    </div>
+
+  </div>
+
+  <div class="scroll-hint" aria-hidden="true">
+    <div class="line"></div>
+    <span class="lbl">scroll</span>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══ ABOUT ══ -->
+<section class="sec" id="sobre" aria-label="Sobre Luis Felipe">
+  <div class="about-g">
+    <div class="reveal-left">
+      <div class="about-carousel">
+        <div class="carousel-track-wrap">
+          <div class="carousel-slides" id="aboutSlides">
+            <div class="carousel-slide">
+              <img src="/images/site-2.jpg"
+                   alt="Luis Felipe IV — retrato" loading="lazy"/>
+            </div>
+            <div class="carousel-slide">
+              <img src="/images/site-3.jpg"
+                   alt="Luis Felipe IV con radio vintage" loading="lazy"/>
+            </div>
+            <div class="carousel-slide">
+              <img src="/images/site-4.jpg"
+                   alt="Luis Felipe IV — portrait" loading="lazy"
+                   style="object-position:center 20%;filter:brightness(.92) contrast(1.08);"/>
+            </div>
+          </div>
+          <!-- Flechas -->
+          <button class="carousel-btn carousel-prev" onclick="carouselPrev()" aria-label="Foto anterior">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="carousel-btn carousel-next" onclick="carouselNext()" aria-label="Foto siguiente">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <!-- Dots -->
+        <div class="carousel-dots" role="tablist" aria-label="Fotos de Luis Felipe">
+          <div class="cd active" onclick="carouselGo(0)" role="tab" aria-label="Foto 1"></div>
+          <div class="cd"        onclick="carouselGo(1)" role="tab" aria-label="Foto 2"></div>
+          <div class="cd"        onclick="carouselGo(2)" role="tab" aria-label="Foto 3"></div>
+        </div>
+        <div class="about-tag">
+          "Nació de una ruptura."
+          <span class="sub-t">100 Canciones de Amor</span>
+        </div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="eye">Quién soy</div>
+      <h2 class="ttl">No soy reseñista.<br>Soy <em>narrador.</em></h2>
+      <div class="about-txt">
+        <p>Empecé a contar historias musicales porque nadie más lo hacía como yo quería escucharlas — no como crítica, sino como <strong>memoria colectiva.</strong></p>
+        <blockquote class="pull-quote">
+          "100 Canciones de Amor nació de una ruptura. Ese es el tipo de honestidad con la que hago todo."
+        </blockquote>
+        <p>He colaborado con Spotify, Amazon Music, Warner y Sony. Pero lo que más me importa son los mensajes de personas que me dicen que gracias a mis videos finalmente entendieron por qué su papá llora con esa canción.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══ ARCHIVO — galería horizontal ══ -->
+<section class="archivo-bg" id="archivo" aria-label="El Archivo">
+  <div class="archivo-head reveal">
+    <div>
+      <div class="eye">El Archivo</div>
+      <h2 class="ttl">Los que más <em>se sienten.</em></h2>
+    </div>
+    <a href="https://www.tiktok.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer"
+       class="lnk-out" aria-label="Ver todos en TikTok">
+      Ver todos en TikTok
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+  </div>
+
+  <!-- Galería scroll horizontal con perspectiva -->
+  <div class="gallery-track reveal" id="galleryTrack" role="list"
+       aria-label="Videos virales de Luis Felipe">
+
+    <!-- Card 1 — con foto de Felipe como placeholder -->
+    <a href="https://www.tiktok.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer"
+       class="gcard" role="listitem" aria-label="Top 5 Canciones melancólicas — 6M views">
+      <div class="gcard-thumb">
+        <img src="/images/site-5.jpg"
+             alt="Top 5 canciones melancólicas" loading="lazy"/>
+        <div class="gcard-play" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#141210"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+      <div class="gcard-info">
+        <div class="gcard-song">"Top 5 Melancólicas"</div>
+        <div class="gcard-meta">
+          <span class="gcard-artist">Varios artistas</span>
+          <span class="gcard-views">6M views</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Card 2 -->
+    <a href="https://www.tiktok.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer"
+       class="gcard" role="listitem" aria-label="100 Canciones Cap 100">
+      <div class="gcard-thumb">
+        <img src="/images/site-6.jpg"
+             alt="100 Canciones de Amor — Cap 100" loading="lazy"/>
+        <div class="gcard-play" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#141210"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+      <div class="gcard-info">
+        <div class="gcard-song">"100 Canciones — Cap. 100"</div>
+        <div class="gcard-meta">
+          <span class="gcard-artist">Episodio final</span>
+          <span class="gcard-views">3M+ views</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Cards 3-6 con placeholder oscuro -->
+    <a href="https://www.tiktok.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer"
+       class="gcard" role="listitem" aria-label="Omakase de Alvarito Díaz">
+      <div class="gcard-thumb">
+        <div class="gcard-ph">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FAFAF7" stroke-width="1"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div class="gcard-play" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#141210"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+      <div class="gcard-info">
+        <div class="gcard-song">"Omakase"</div>
+        <div class="gcard-meta">
+          <span class="gcard-artist">Alvarito Díaz</span>
+          <span class="gcard-views">2M+ views</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="https://www.tiktok.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer"
+       class="gcard" role="listitem" aria-label="Sienna de The Marías">
+      <div class="gcard-thumb">
+        <div class="gcard-ph">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FAFAF7" stroke-width="1"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div class="gcard-play" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#141210"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+      <div class="gcard-info">
+        <div class="gcard-song">"Sienna"</div>
+        <div class="gcard-meta">
+          <span class="gcard-artist">The Marías</span>
+          <span class="gcard-views">1.8M views</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="https://www.tiktok.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer"
+       class="gcard" role="listitem" aria-label="Doma de Josean Log">
+      <div class="gcard-thumb">
+        <div class="gcard-ph">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FAFAF7" stroke-width="1"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div class="gcard-play" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#141210"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+      <div class="gcard-info">
+        <div class="gcard-song">"Doma"</div>
+        <div class="gcard-meta">
+          <span class="gcard-artist">Josean Log</span>
+          <span class="gcard-views">1.5M views</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="https://youtube.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer"
+       class="gcard" role="listitem" aria-label="Uno — YouTube">
+      <div class="gcard-thumb">
+        <div class="gcard-ph">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FAFAF7" stroke-width="1"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div class="gcard-play" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#141210"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+      <div class="gcard-info">
+        <div class="gcard-song">"Uno"</div>
+        <div class="gcard-meta">
+          <span class="gcard-artist">YouTube</span>
+          <span class="gcard-views">ver →</span>
+        </div>
+      </div>
+    </a>
+
+  </div><!-- /gallery-track -->
+
+  <!-- Dots indicador -->
+  <div class="gallery-hint reveal" aria-hidden="true">
+    <div class="gallery-dots" id="galleryDots">
+      <div class="d active"></div>
+      <div class="d"></div>
+      <div class="d"></div>
+      <div class="d"></div>
+      <div class="d"></div>
+      <div class="d"></div>
+    </div>
+    <span>Desliza para ver más</span>
+  </div>
+
+</section>
+
+<div class="div"></div>
+
+<!-- ══ ENTRECANCIONES — muro de notas ══ -->
+<section class="entre-bg" id="entrecanciones" aria-label="Entrecanciones">
+  <div class="entre-in">
+    <div class="entre-head reveal">
+      <div>
+        <div class="eye-r">De la comunidad</div>
+        <h2 class="ttl-w">Entrecanciones.<br><em>Sus historias.</em></h2>
+      </div>
+      <a href="#buzon" class="btn-p" onclick="switchTab('historia')" style="font-size:13px;padding:11px 22px;min-height:44px;">
+        Agrega la tuya
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </a>
+    </div>
+
+    <div class="notas-grid reveal" style="transition-delay:.1s">
+
+      <div class="nota">
+        <div class="nota-cancion">"Fix You"</div>
+        <div class="nota-artista">Coldplay</div>
+        <div class="nota-texto">La puse en repeat el día que mi abuela murió. No encontraba palabras y esta canción las tenía todas.</div>
+        <div class="nota-feel">Pérdida</div>
+      </div>
+
+      <div class="nota">
+        <div class="nota-cancion">"El Triste"</div>
+        <div class="nota-artista">José José</div>
+        <div class="nota-texto">Mi papá la canta cada vez que toma. Antes me daba vergüenza, ahora la busco yo para entender qué le pasa.</div>
+        <div class="nota-feel">Nostalgia</div>
+      </div>
+
+      <div class="nota">
+        <div class="nota-cancion">"Sienna"</div>
+        <div class="nota-artista">The Marías</div>
+        <div class="nota-texto">Se la mandé a alguien sin decirle nada. Ella entendió todo. Nunca lo hablamos pero algo cambió.</div>
+        <div class="nota-feel">Amor tácito</div>
+      </div>
+
+      <div class="nota">
+        <div class="nota-cancion">"Yellow"</div>
+        <div class="nota-artista">Coldplay</div>
+        <div class="nota-texto">Primera canción que escuché en inglés y entendí de corazón sin saber el idioma. Algo en la melodía lo decía todo.</div>
+        <div class="nota-feel">Descubrimiento</div>
+      </div>
+
+      <div class="nota">
+        <div class="nota-cancion">"Omakase"</div>
+        <div class="nota-artista">Alvarito Díaz</div>
+        <div class="nota-texto">La escuché por primera vez en una cena de cumpleaños. Ahora no puedo comer sin pensar en esa noche.</div>
+        <div class="nota-feel">Memoria</div>
+      </div>
+
+      <div class="nota">
+        <div class="nota-cancion">"Doma"</div>
+        <div class="nota-artista">Josean Log</div>
+        <div class="nota-texto">Me la puso mi ex antes de irse. No sé si fue una despedida o una promesa. Todavía no lo sé.</div>
+        <div class="nota-feel">Ambigüedad</div>
+      </div>
+
+      <div class="nota">
+        <div class="nota-cancion">"Pink + White"</div>
+        <div class="nota-artista">Frank Ocean</div>
+        <div class="nota-texto">La escucho cuando necesito recordarme que las cosas buenas también terminan y eso está bien.</div>
+        <div class="nota-feel">Paz</div>
+      </div>
+
+      <div class="nota add-nota" onclick="switchTab('historia'); document.getElementById('buzon').scrollIntoView({behavior:'smooth'})" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); switchTab('historia'); document.getElementById('buzon').scrollIntoView({behavior:'smooth'}); }" role="button" tabindex="0" aria-label="Agregar tu historia">
+        <div class="add-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <span>Agrega la tuya</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══ BUZÓN — CARTA HECHA A MANO ══ -->
+<section class="buzon-bg" id="buzon" aria-label="Buzón de historias">
+  <div class="buzon-in">
+
+    <div class="eye reveal" style="transition-delay:.06s">Buzón de historias</div>
+    <h2 class="ttl reveal" id="buzonTitle" style="transition-delay:.1s">
+      ¿Tienes una canción<br>que <em>contar?</em>
+    </h2>
+    <p class="sub reveal" id="buzonIntro" style="transition-delay:.14s;margin-bottom:28px;">
+      Cuéntame la historia que tuviste con una canción. Las leo todas personalmente.
+    </p>
+
+    <div class="sello-box" aria-hidden="true">
+      <span class="s-note">♪</span>
+      <span class="s-lbl">Música</span>
+    </div>
+
+    <div class="buzon-controls reveal" style="transition-delay:.18s">
+      <!-- Tabs: Contar historia / Dedicar canción -->
+      <div class="buzon-tabs">
+        <button class="btab active" id="tab-historia" onclick="switchTab('historia')" aria-selected="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Contar mi historia
+        </button>
+        <button class="btab" id="tab-dedicar" onclick="switchTab('dedicar')" aria-selected="false">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Dedicar una canción
+        </button>
+      </div>
+    </div>
+
+    <div class="reveal" style="transition-delay:.22s">
+      <form class="carta" id="buzonForm"
+            name="buzon-historias" method="POST"
+            novalidate>
+        <div style="display:none"><label>No llenar: <input name="bot-field"/></label></div>
+
+        <!-- Encabezado carta -->
+        <div class="carta-top">
+          <span class="carta-to">Para: Luis Felipe IV ✉</span>
+          <span class="carta-sello" aria-hidden="true">♪</span>
+        </div>
+
+        <!-- Cuerpo con líneas de papel -->
+        <div class="carta-body">
+          <p class="form-note">
+            Tu historia se mantiene privada. Solo podrá usarse en contenido si marcas la autorización al final.
+          </p>
+
+          <div class="cfield">
+            <label for="b-nombre">Tu nombre o apodo <span class="opt-lbl">(opcional)</span></label>
+            <input class="cinput" type="text" id="b-nombre" name="senderName"
+                        placeholder="Tu nombre o apodo"/>
+          </div>
+
+          <div class="cfield music-picker" data-music-picker>
+            <label for="b-cancion">Busca una canción <span style="color:var(--red)">*</span></label>
+            <input type="hidden" name="song" data-music-song/>
+            <input type="hidden" name="artist" data-music-artist/>
+            <input type="hidden" name="spotifyTrackId" data-music-track-id/>
+            <input type="hidden" name="spotifyUrl" data-music-url/>
+            <div class="music-picker-control">
+              <input class="cinput" type="text" id="b-cancion" data-music-query
+                     placeholder="Título o artista..." autocomplete="off" role="combobox"
+                     aria-autocomplete="list" aria-controls="b-resultados" aria-expanded="false"
+                     aria-describedby="b-cancion-ayuda"/>
+              <button class="music-picker-clear" type="button" data-music-clear hidden aria-label="Cambiar canción">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+              </button>
+            </div>
+            <div class="music-picker-results" id="b-resultados" data-music-results role="listbox" aria-label="Resultados de Spotify"></div>
+            <p class="music-picker-help" id="b-cancion-ayuda" data-music-help>Escribe para buscar en Spotify.</p>
+            <details class="manual-song-entry" data-music-manual>
+              <summary>¿No la encuentras? Escríbela manualmente</summary>
+              <div class="manual-song-fields">
+                <label for="b-cancion-manual">Canción</label>
+                <input class="cinput" type="text" id="b-cancion-manual" data-music-manual-song placeholder="Título..."/>
+                <label for="b-artista-manual">Artista</label>
+                <input class="cinput" type="text" id="b-artista-manual" data-music-manual-artist placeholder="¿Quién la canta?"/>
+              </div>
+            </details>
+          </div>
+
+          <div class="cfield">
+            <label for="b-historia">La historia <span style="color:var(--red)">*</span></label>
+            <textarea class="ctarea" id="b-historia" name="message"
+                      placeholder="Cuéntame todo. ¿Dónde estabas? ¿Qué pasó? ¿Qué sentiste? No hay límite de palabras..."
+                      required aria-required="true" rows="5"></textarea>
+          </div>
+
+          <div class="cfield">
+            <label for="b-dedica">
+              ¿A quién se la dedicas?
+              <span class="opt-lbl">(opcional)</span>
+            </label>
+            <input class="cinput" type="text" id="b-dedica" name="recipientName"
+                   placeholder="A mi ex, a mi abuela, a mí mismo de hace 10 años..."/>
+          </div>
+
+          <div class="cfield">
+            <label for="b-instagram">Instagram <span class="opt-lbl">(opcional)</span></label>
+            <input class="cinput" type="text" id="b-instagram" name="instagram"
+                   placeholder="@tuusuario" autocomplete="off"/>
+            <p class="field-help">Si autorizas el uso de tu historia, podremos etiquetarte aquí.</p>
+          </div>
+
+          <label class="anon-row">
+            <input type="checkbox" name="allowPublishing" value="true"/>
+            <span class="atxt">Autorizo a Luis Felipe a <strong>adaptar o usar mi historia en contenido</strong></span>
+          </label>
+        </div>
+
+        <!-- Pie de la carta -->
+        <div class="carta-firma">
+          <p class="firma-txt">Tu historia llega directo a mí. La leo personalmente.</p>
+          <button type="submit" class="btn-enviar" id="buzonBtn">
+            Enviar carta
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </form>
+
+      <div class="buzon-ok" id="buzonOk" role="alert" aria-live="polite" tabindex="-1">
+        <div class="ok-icon">✉</div>
+        <h3>Carta enviada.</h3>
+        <p>La recibí. Gracias por compartirla conmigo.</p>
+        <button type="button" class="btn-otra" onclick="resetDedicationForm()">
+          Contar otra historia
+        </button>
+      </div>
+
+      <!-- FORM: COMPARTIR DEDICATORIA -->
+      <form class="carta" id="dedicarForm" style="display:none"
+            name="dedicar-cancion" method="POST"
+            novalidate>
+        <div style="display:none"><input name="bot-field-d"/></div>
+
+        <div class="carta-top" style="background:var(--ink);">
+          <span class="carta-to">♥ Dedicar una canción</span>
+          <span class="carta-sello" aria-hidden="true">♫</span>
+        </div>
+
+        <div class="carta-body">
+          <p class="form-note">
+            No enviaremos correos ni contactaremos a la otra persona: tú decides cómo compartir tu dedicatoria.
+          </p>
+
+          <div class="cfield music-picker" data-music-picker>
+            <label for="d-cancion">Busca una canción <span style="color:var(--red)">*</span></label>
+            <input type="hidden" name="song" data-music-song/>
+            <input type="hidden" name="artist" data-music-artist/>
+            <input type="hidden" name="spotifyTrackId" data-music-track-id/>
+            <input type="hidden" name="spotifyUrl" data-music-url/>
+            <div class="music-picker-control">
+              <input class="cinput" type="text" id="d-cancion" data-music-query
+                     placeholder="Título o artista..." autocomplete="off" role="combobox"
+                     aria-autocomplete="list" aria-controls="d-resultados" aria-expanded="false"
+                     aria-describedby="d-cancion-ayuda"/>
+              <button class="music-picker-clear" type="button" data-music-clear hidden aria-label="Cambiar canción">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+              </button>
+            </div>
+            <div class="music-picker-results" id="d-resultados" data-music-results role="listbox" aria-label="Resultados de Spotify"></div>
+            <p class="music-picker-help" id="d-cancion-ayuda" data-music-help>Escribe para buscar en Spotify.</p>
+            <details class="manual-song-entry" data-music-manual>
+              <summary>¿No la encuentras? Escríbela manualmente</summary>
+              <div class="manual-song-fields">
+                <label for="d-cancion-manual">Canción</label>
+                <input class="cinput" type="text" id="d-cancion-manual" data-music-manual-song placeholder="Título..."/>
+                <label for="d-artista-manual">Artista</label>
+                <input class="cinput" type="text" id="d-artista-manual" data-music-manual-artist placeholder="¿Quién la canta?"/>
+              </div>
+            </details>
+          </div>
+
+          <div class="cfield">
+            <label for="d-para">¿Para quién es esta dedicatoria? <span style="color:var(--red)">*</span></label>
+            <input class="cinput" type="text" id="d-para" name="recipientName"
+                   placeholder="El nombre de esa persona..." required aria-required="true"/>
+          </div>
+
+          <div class="cfield">
+            <label for="d-remitente">De parte de <span class="opt-lbl">(opcional)</span></label>
+            <input class="cinput" type="text" id="d-remitente" name="senderName"
+                   placeholder="Tu nombre o apodo"/>
+          </div>
+
+          <div class="cfield">
+            <label for="d-mensaje">¿Qué le quieres decir? <span style="color:var(--red)">*</span></label>
+            <textarea class="ctarea" id="d-mensaje" name="message"
+                      placeholder="Por qué esta canción, por qué ahora, por qué ella o él..."
+                      required aria-required="true" rows="4"></textarea>
+          </div>
+        </div>
+
+        <div class="carta-firma">
+          <p class="firma-txt">Tú decides cómo y cuándo compartirla.</p>
+          <button type="submit" class="btn-enviar" id="dedicarBtn"
+                  style="background:var(--ink);">
+            Crear dedicatoria
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </form>
+
+      <div class="buzon-ok" id="dedicarOk" style="display:none" role="alert" aria-live="polite" tabindex="-1">
+        <div class="ok-icon">♥</div>
+        <h3>Tu dedicatoria está lista.</h3>
+        <p>Compártela por el medio que prefieras. No enviaremos correos ni contactaremos a la otra persona.</p>
+        <label class="share-link-label" for="dedicarShareUrl">Tu enlace privado</label>
+        <input class="share-link-input" id="dedicarShareUrl" type="text" readonly aria-describedby="dedicarShareHelp"/>
+        <p class="share-link-help" id="dedicarShareHelp">Cualquier persona con este enlace podrá ver la dedicatoria.</p>
+        <div class="share-actions">
+          <button class="btn-share-primary" type="button" onclick="sharePrivateDedication()">Compartir</button>
+          <button class="btn-share-secondary" type="button" onclick="copyPrivateDedicationLink()">Copiar enlace</button>
+          <a class="btn-share-secondary" id="dedicarWhatsApp" href="#" target="_blank" rel="noreferrer">WhatsApp</a>
+        </div>
+        <button type="button" class="btn-otra" onclick="resetPrivateDedicationForm()">Crear otra dedicatoria</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══ NEWSLETTER ══ -->
+<section class="nl-bg" id="newsletter" aria-label="Newsletter">
+  <div class="nl-in">
+    <div class="eye reveal">Newsletter</div>
+    <h2 class="ttl reveal" style="transition-delay:.06s">
+      Historias en<br>tu <em>correo.</em>
+    </h2>
+    <p class="sub reveal" style="transition-delay:.1s">
+      Una vez a la semana. La historia detrás de una canción que vale la pena escuchar. Sin spam.
+    </p>
+    <form class="nl-form reveal seva-form formkit-form" id="nlForm" style="transition-delay:.14s"
+          action="https://app.kit.com/forms/9975031/subscriptions" method="post"
+          data-sv-form="9975031" data-uid="8b7756b14d" data-format="inline" data-version="5"
+          data-options='{"settings":{"after_subscribe":{"action":"message","success_message":"Revisa tu correo para confirmar tu suscripción."},"recaptcha":{"enabled":false},"return_visitor":{"action":"show"}},"version":"5"}'>
+      <ul class="nl-errors formkit-alert formkit-alert-error" data-element="errors" data-group="alert" aria-live="polite"></ul>
+      <div class="nl-fields" data-element="fields">
+      <input class="nl-input formkit-input" type="email" id="nl-email" name="email_address"
+             placeholder="tu@correo.com" required aria-required="true"
+             aria-label="Tu correo electrónico"/>
+      <button type="submit" class="btn-nl formkit-submit" id="nlBtn" data-element="submit">
+        Suscribirme
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      </div>
+    </form>
+    <p class="nl-aviso reveal" style="transition-delay:.18s">
+      Tu correo solo se usa para el newsletter. Sin spam, sin terceros. Conectado con Kit.
+    </p>
+    <div class="nl-ok" id="nlOk" role="alert" aria-live="polite">¡Listo! Nos vemos en tu inbox.</div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══ REDES ══ -->
+<section class="sec" id="redes" aria-label="Redes sociales">
+  <div class="eye reveal">Encuéntrame</div>
+  <h2 class="ttl reveal" style="transition-delay:.06s">Dónde <em>vivo.</em></h2>
+  <div class="links-g reveal" style="transition-delay:.12s" role="list">
+
+    <a href="https://www.tiktok.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer"
+       class="lcard" role="listitem" aria-label="TikTok @luisfelipeiv">
+      <div class="ico" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+      </div>
+      <div><div class="pname">TikTok</div><div class="phand">@luisfelipeiv</div></div>
+      <div class="arr" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </a>
+
+    <a href="https://www.instagram.com/luisfelipeiv" target="_blank" rel="noopener noreferrer"
+       class="lcard" role="listitem" aria-label="Instagram @luisfelipeiv">
+      <div class="ico" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </div>
+      <div><div class="pname">Instagram</div><div class="phand">@luisfelipeiv</div></div>
+      <div class="arr" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </a>
+
+    <a href="https://youtube.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer"
+       class="lcard" role="listitem" aria-label="YouTube @luisfelipeiv">
+      <div class="ico" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </div>
+      <div><div class="pname">YouTube</div><div class="phand">@luisfelipeiv</div></div>
+      <div class="arr" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </a>
+
+    <a href="mailto:contacto@luisfelipeiv.com" class="lcard" role="listitem" aria-label="Email contacto@luisfelipeiv.com">
+      <div class="ico" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div><div class="pname">Email</div><div class="phand">contacto@luisfelipeiv.com</div></div>
+      <div class="arr" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+    </a>
+
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="f-brand">Luis<span class="dot">·</span>Felipe IV</div>
+  <ul class="f-links" role="list">
+    <li><a href="https://www.tiktok.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer">TikTok</a></li>
+    <li><a href="https://www.instagram.com/luisfelipeiv" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+    <li><a href="https://youtube.com/@luisfelipeiv" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+    <li><a href="mailto:contacto@luisfelipeiv.com">Email</a></li>
+  </ul>
+  <p class="f-copy">© 2026 Luis Felipe IV</p>
+</footer>
