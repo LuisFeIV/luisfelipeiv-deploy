@@ -5,17 +5,57 @@ window.addEventListener('scroll', () => {
 }, {passive:true});
 
 /* ── Mobile menu ── */
+const mobileMenu = document.getElementById('mobMenu');
+const mobileMenuToggle = document.querySelector('.nav-burger');
+const mobileMenuClose = document.querySelector('.mob-x');
+
 function menuOpen(){
-  document.getElementById('mobMenu').classList.add('open');
+  if(!mobileMenu || !mobileMenuToggle) return;
+
+  mobileMenu.removeAttribute('inert');
+  mobileMenu.setAttribute('aria-hidden','false');
+  mobileMenu.classList.add('open');
   document.body.style.overflow='hidden';
-  document.querySelector('.nav-burger').setAttribute('aria-expanded','true');
+  mobileMenuToggle.setAttribute('aria-expanded','true');
+  requestAnimationFrame(() => mobileMenuClose && mobileMenuClose.focus());
 }
 function menuClose(){
-  document.getElementById('mobMenu').classList.remove('open');
+  if(!mobileMenu || !mobileMenuToggle) return;
+
+  const wasOpen = mobileMenu.classList.contains('open');
+  mobileMenu.classList.remove('open');
+  mobileMenu.setAttribute('aria-hidden','true');
+  mobileMenu.setAttribute('inert','');
   document.body.style.overflow='';
-  document.querySelector('.nav-burger').setAttribute('aria-expanded','false');
+  mobileMenuToggle.setAttribute('aria-expanded','false');
+  if(wasOpen) mobileMenuToggle.focus();
 }
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') menuClose(); });
+document.addEventListener('keydown', e=>{
+  if(!mobileMenu || !mobileMenu.classList.contains('open')) return;
+
+  if(e.key==='Escape'){
+    menuClose();
+    return;
+  }
+
+  if(e.key==='Tab'){
+    const focusable = [...mobileMenu.querySelectorAll('a,button:not([tabindex="-1"])')];
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if(e.shiftKey && document.activeElement === first){
+      e.preventDefault();
+      last.focus();
+    } else if(!e.shiftKey && document.activeElement === last){
+      e.preventDefault();
+      first.focus();
+    }
+  }
+});
+
+window.matchMedia('(min-width: 769px)').addEventListener('change', event => {
+  if(event.matches) menuClose();
+});
 
 /* ── Hero parallax: nombre gigante + zoom imagen ── */
 const heroName = document.getElementById('heroName');
