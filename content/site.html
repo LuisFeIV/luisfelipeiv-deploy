@@ -14,7 +14,7 @@
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       Dedicar canción
     </a>
-    <button class="nav-burger" onclick="menuOpen()" aria-label="Abrir menú" aria-expanded="false">
+    <button class="nav-burger" onclick="menuOpen()" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobMenu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -43,11 +43,25 @@
 </div>
 
 <!-- Mobile menu -->
-<div class="mob" id="mobMenu" role="dialog" aria-modal="true">
-  <button class="mob-x" onclick="menuClose()" aria-label="Cerrar">✕</button>
-  <a href="#archivo" onclick="menuClose()">El Archivo</a>
-  <a href="#buzon" onclick="menuClose()">Buzón</a>
-  <a href="#redes" onclick="menuClose()">Redes</a>
+<div class="mob" id="mobMenu" role="dialog" aria-modal="true" aria-label="Menú de navegación" aria-hidden="true" inert>
+  <button class="mob-backdrop" type="button" tabindex="-1" onclick="menuClose()" aria-label="Cerrar menú"></button>
+  <div class="mob-panel">
+    <div class="mob-head">
+      <span class="mob-brand" aria-hidden="true">Luis<span class="dot">·</span>Felipe IV</span>
+      <button class="mob-x" type="button" onclick="menuClose()" aria-label="Cerrar menú">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"/>
+        </svg>
+      </button>
+    </div>
+    <nav class="mob-links" aria-label="Navegación móvil">
+      <a href="#archivo" onclick="menuClose()"><span>01</span>El Archivo</a>
+      <a href="#entrecanciones" onclick="menuClose()"><span>02</span>Entrecanciones</a>
+      <a href="#buzon" onclick="menuClose()"><span>03</span>Buzón</a>
+      <a href="#redes" onclick="menuClose()"><span>04</span>Redes</a>
+    </nav>
+    <a class="mob-dedicar" href="#buzon" onclick="switchTab('dedicar'); menuClose()">Dedicar una canción</a>
+  </div>
 </div>
 
 <main id="main">
