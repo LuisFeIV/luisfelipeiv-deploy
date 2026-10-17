@@ -5,6 +5,7 @@ import styles from "../admin.module.css";
 import { adminSessionCookieName, hasValidAdminSession } from "@/lib/admin-auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { DedicationStatus } from "@/lib/supabase/database.types";
+import { AdminFrame } from "../_components/admin-frame";
 
 const statusFilterValues = [
   "all",
@@ -146,23 +147,18 @@ export default async function AdminDedicationsPage({
     statusFilter !== "all" || permissionFilter !== "all";
 
   return (
-    <main className={styles.adminShell}>
-      <header className={styles.adminHeader}>
+    <AdminFrame activeSection="dedications">
+      <header className={styles.pageHeader}>
         <div>
-          <p className={styles.eyebrow}>Luis Felipe IV · acceso protegido</p>
+          <p className={styles.eyebrow}>Buzón privado · datos reales</p>
           <h1 className={styles.adminTitle} id="admin-dedications-title">
-            Dedicatorias recibidas
+            Dedicatorias
           </h1>
           <p className={styles.copy}>
             {dedications.length} historia{dedications.length === 1 ? "" : "s"} ·
             mostrando hasta 100, de la más nueva a la más antigua.
           </p>
         </div>
-        <form action="/api/admin/logout" method="post">
-          <button className={styles.logoutButton} type="submit">
-            Cerrar sesión
-          </button>
-        </form>
       </header>
 
       <nav aria-label="Filtros de dedicatorias" className={styles.filters}>
@@ -256,99 +252,80 @@ export default async function AdminDedicationsPage({
           className={styles.dedicationList}
         >
           {dedications.map((dedication) => (
-            <article
+            <details
               className={styles.dedicationCard}
               id={`dedication-${dedication.id}`}
               key={dedication.id}
             >
-              <div className={styles.cardHeader}>
-                <p className={styles.date}>{formatDate(dedication.created_at)}</p>
-                <details className={styles.statusMenu}>
-                  <summary
-                    aria-label={`Cambiar estado: ${statusLabels[dedication.status]}`}
-                    className={styles.statusMenuTrigger}
-                  >
+              <summary className={styles.dedicationSummary}>
+                <span className={styles.dedicationSummaryMain}>
+                  <span className={styles.date}>{formatDate(dedication.created_at)}</span>
+                  <strong>{dedication.song} <em>— {dedication.artist}</em></strong>
+                  <small>De {dedication.sender_name ?? "Anónimo"} · para {dedication.recipient_name ?? "alguien especial"}</small>
+                </span>
+                <span className={styles.dedicationSummaryMeta}>
+                  <span className={styles.statusBadge} data-status={dedication.status}>
                     {statusLabels[dedication.status]}
-                  </summary>
-                  <div className={styles.statusMenuContent}>
-                    <p className={styles.statusMenuLabel}>Cambiar estado</p>
-                    <div className={styles.statusMenuOptions}>
-                      {Object.entries(statusLabels).map(([value, label]) => (
-                        <form
-                          action="/api/admin/dedications/update"
-                          key={value}
-                          method="post"
-                        >
-                          <input name="id" type="hidden" value={dedication.id} />
-                          <input
-                            name="filterStatus"
-                            type="hidden"
-                            value={statusFilter}
-                          />
-                          <input
-                            name="filterPermission"
-                            type="hidden"
-                            value={permissionFilter}
-                          />
-                          <input name="status" type="hidden" value={value} />
-                          <button
-                            className={
-                              dedication.status === value
-                                ? `${styles.statusMenuOption} ${styles.statusMenuOptionActive}`
-                                : styles.statusMenuOption
-                            }
-                            disabled={dedication.status === value}
-                            type="submit"
-                          >
-                            {label}
-                          </button>
-                        </form>
-                      ))}
-                    </div>
-                  </div>
-                </details>
-              </div>
-              {parameters.updated === dedication.id ? (
-                <p className={styles.updatedMessage} role="status">
-                  Estado actualizado correctamente.
-                </p>
-              ) : null}
-              <h2 className={styles.song}>
-                {dedication.song} <span>— {dedication.artist}</span>
-              </h2>
-              <p className={styles.message}>{dedication.message}</p>
-              <dl className={styles.details}>
-                <div>
-                  <dt>Envió</dt>
-                  <dd>{dedication.sender_name ?? "Anónimo"}</dd>
-                </div>
-                <div>
-                  <dt>Dedicada a</dt>
-                  <dd>{dedication.recipient_name ?? "No especificado"}</dd>
-                </div>
-                <div>
-                  <dt>Uso en contenido</dt>
-                  <dd>{dedication.allow_publishing ? "Autorizado" : "No autorizado"}</dd>
-                </div>
-                {dedication.instagram ? (
-                  <div>
-                    <dt>Instagram</dt>
-                    <dd>
-                      <a
-                        href={getInstagramUrl(dedication.instagram)}
-                        rel="noreferrer"
-                        target="_blank"
-                      >
-                        {dedication.instagram}
-                      </a>
-                    </dd>
-                  </div>
+                  </span>
+                  <span>{dedication.allow_publishing ? "Con permiso" : "Privada"}</span>
+                </span>
+              </summary>
+              <div className={styles.dedicationDetail}>
+                {parameters.updated === dedication.id ? (
+                  <p className={styles.updatedMessage} role="status">
+                    Estado actualizado correctamente.
+                  </p>
                 ) : null}
-              </dl>
-            </article>
+                <p className={styles.message}>{dedication.message}</p>
+                <dl className={styles.details}>
+                  <div>
+                    <dt>Envió</dt>
+                    <dd>{dedication.sender_name ?? "Anónimo"}</dd>
+                  </div>
+                  <div>
+                    <dt>Dedicada a</dt>
+                    <dd>{dedication.recipient_name ?? "No especificado"}</dd>
+                  </div>
+                  <div>
+                    <dt>Uso en contenido</dt>
+                    <dd>{dedication.allow_publishing ? "Autorizado" : "No autorizado"}</dd>
+                  </div>
+                  {dedication.instagram ? (
+                    <div>
+                      <dt>Instagram</dt>
+                      <dd>
+                        <a href={getInstagramUrl(dedication.instagram)} rel="noreferrer" target="_blank">
+                          {dedication.instagram}
+                        </a>
+                      </dd>
+                    </div>
+                  ) : null}
+                </dl>
+                <div className={styles.moderationRow}>
+                  <p>Cambiar estado</p>
+                  <div className={styles.moderationActions}>
+                    {Object.entries(statusLabels).map(([value, label]) => (
+                      <form action="/api/admin/dedications/update" key={value} method="post">
+                        <input name="id" type="hidden" value={dedication.id} />
+                        <input name="filterStatus" type="hidden" value={statusFilter} />
+                        <input name="filterPermission" type="hidden" value={permissionFilter} />
+                        <input name="status" type="hidden" value={value} />
+                        <button
+                          className={dedication.status === value ? `${styles.moderationButton} ${styles.moderationButtonActive}` : styles.moderationButton}
+                          disabled={dedication.status === value}
+                          type="submit"
+                        >
+                          {label}
+                        </button>
+                      </form>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </details>
           ))}
         </section>
       ) : null}
-    </main>
+    </AdminFrame>
   );
 }
