@@ -5,6 +5,7 @@
   <a href="#" class="nav-logo" aria-label="Luis Felipe IV">Luis<span class="dot">·</span>Felipe IV</a>
   <ul class="nav-links" role="list">
     <li><a href="#archivo">El Archivo</a></li>
+    <li><a href="#playlists">Playlists</a></li>
     <li><a href="#entrecanciones">Entrecanciones</a></li>
     <li><a href="#buzon">Buzón</a></li>
     <li><a href="#redes">Redes</a></li>
@@ -56,9 +57,10 @@
     </div>
     <nav class="mob-links" aria-label="Navegación móvil">
       <a href="#archivo" onclick="menuClose()"><span>01</span>El Archivo</a>
-      <a href="#entrecanciones" onclick="menuClose()"><span>02</span>Entrecanciones</a>
-      <a href="#buzon" onclick="menuClose()"><span>03</span>Buzón</a>
-      <a href="#redes" onclick="menuClose()"><span>04</span>Redes</a>
+      <a href="#playlists" onclick="menuClose()"><span>02</span>Playlists</a>
+      <a href="#entrecanciones" onclick="menuClose()"><span>03</span>Entrecanciones</a>
+      <a href="#buzon" onclick="menuClose()"><span>04</span>Buzón</a>
+      <a href="#redes" onclick="menuClose()"><span>05</span>Redes</a>
     </nav>
     <a class="mob-dedicar" href="#buzon" onclick="switchTab('dedicar'); menuClose()">Dedicar una canción</a>
   </div>
@@ -315,6 +317,83 @@
 
 <div class="div"></div>
 
+<!-- ══ PLAYLISTS ══ -->
+<section class="playlists-bg" id="playlists" aria-labelledby="playlists-title">
+  <div class="playlists-in">
+    <div class="playlists-head reveal">
+      <div>
+        <div class="eye">Playlists</div>
+        <h2 class="ttl" id="playlists-title">Canciones para<br><em>sentir despacio.</em></h2>
+        <p class="sub">Selecciones hechas por Luis Felipe para acompañar momentos, recuerdos y todo eso que a veces una canción explica mejor.</p>
+      </div>
+      <a class="spotify-link" href="https://open.spotify.com/user/12135695072" target="_blank" rel="noopener noreferrer">
+        Ver perfil en Spotify
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+
+    <div class="playlist-grid reveal" role="list" aria-label="Playlists de Luis Felipe IV">
+      <div class="playlist-item" role="listitem">
+      <a class="playlist-card playlist-card-boleros"
+         href="https://open.spotify.com/playlist/7DPmtNccvQJqSfoS2OkNnF" target="_blank" rel="noopener noreferrer"
+         aria-label="Abrir Boleros que se sienten en Spotify">
+        <div class="playlist-cover" aria-hidden="true">
+          <span class="playlist-cover-kicker">LF · IV</span>
+          <span class="playlist-cover-title">Boleros</span>
+          <span class="playlist-cover-note">que se sienten</span>
+          <svg class="playlist-vinyl" width="86" height="86" viewBox="0 0 86 86" fill="none"><circle cx="43" cy="43" r="40" stroke="currentColor" stroke-width="2"/><circle cx="43" cy="43" r="24" stroke="currentColor"/><circle cx="43" cy="43" r="8" fill="currentColor"/></svg>
+        </div>
+        <div class="playlist-info">
+          <svg class="playlist-card-link" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <p class="playlist-label">Playlist</p>
+          <h3>Boleros que se sienten</h3>
+          <p class="playlist-desc">Para escuchar sin prisa y con el corazón abierto.</p>
+        </div>
+      </a>
+      </div>
+
+      <div class="playlist-item" role="listitem">
+      <a class="playlist-card playlist-card-hundred"
+         href="https://open.spotify.com/playlist/1aeqRnxHEanUjNnyeaoGHw" target="_blank" rel="noopener noreferrer"
+         aria-label="Abrir 100 Canciones que se sienten en Spotify">
+        <div class="playlist-cover" aria-hidden="true">
+          <span class="playlist-cover-kicker">Una historia por canción</span>
+          <strong class="playlist-cover-number">100</strong>
+          <span class="playlist-cover-note">canciones que se sienten</span>
+        </div>
+        <div class="playlist-info">
+          <svg class="playlist-card-link" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <p class="playlist-label">La más guardada</p>
+          <h3>100 Canciones que se sienten</h3>
+          <p class="playlist-desc">La música detrás de las historias que nos acompañan.</p>
+        </div>
+      </a>
+      </div>
+
+      <div class="playlist-item" role="listitem">
+      <a class="playlist-card playlist-card-dedicar"
+         href="https://open.spotify.com/playlist/2PoIQAnGxzymkXlT2rk7Lt" target="_blank" rel="noopener noreferrer"
+         aria-label="Abrir Canciones para dedicar en Spotify">
+        <div class="playlist-cover" aria-hidden="true">
+          <span class="playlist-cover-kicker">Luis Felipe IV</span>
+          <span class="playlist-cover-title">Dedicar</span>
+          <span class="playlist-cover-note">una canción para alguien</span>
+          <svg class="playlist-heart" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="playlist-info">
+          <svg class="playlist-card-link" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <p class="playlist-label">Para compartir</p>
+          <h3>Canciones para dedicar</h3>
+          <p class="playlist-desc">Para decir con música lo que cuesta poner en palabras.</p>
+        </div>
+      </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
 <!-- ══ ENTRECANCIONES — muro de notas ══ -->
 <section class="entre-bg" id="entrecanciones" aria-label="Entrecanciones">
   <div class="entre-in">
@@ -557,6 +636,89 @@
             </div>
             <div class="music-picker-results" id="d-resultados" data-music-results role="listbox" aria-label="Resultados de Spotify"></div>
             <p class="music-picker-help" id="d-cancion-ayuda" data-music-help>Escribe para buscar en Spotify.</p>
+            <details class="song-recommendations" data-song-recommendations>
+              <summary class="song-recommendations-summary">
+                <span>
+                  <strong>¿No sabes cuál dedicar?</strong>
+                  <small>Te ayudamos a elegir según lo que sientes.</small>
+                </span>
+                <span class="song-recommendations-toggle" aria-hidden="true"></span>
+              </summary>
+              <div class="song-recommendations-body">
+                <div class="song-recommendation-tabs" role="tablist" aria-label="Elige una intención">
+                  <button class="song-recommendation-tab" id="recommendation-tab-love" type="button"
+                          role="tab" aria-selected="true" aria-controls="recommendation-panel-love"
+                          data-song-recommendation-tab>
+                    Enamorarse
+                  </button>
+                  <button class="song-recommendation-tab" id="recommendation-tab-miss" type="button"
+                          role="tab" aria-selected="false" aria-controls="recommendation-panel-miss"
+                          tabindex="-1" data-song-recommendation-tab>
+                    Extrañar
+                  </button>
+                  <button class="song-recommendation-tab" id="recommendation-tab-celebrate" type="button"
+                          role="tab" aria-selected="false" aria-controls="recommendation-panel-celebrate"
+                          tabindex="-1" data-song-recommendation-tab>
+                    Celebrar
+                  </button>
+                </div>
+
+                <div class="song-recommendation-panel" id="recommendation-panel-love" role="tabpanel"
+                     aria-labelledby="recommendation-tab-love" data-song-recommendation-panel>
+                  <div class="song-recommendation-copy">
+                    <p class="song-recommendation-intent">Para enamorarse</p>
+                    <h3>Contigo <span>— Los Panchos</span></h3>
+                    <p>Una declaración cálida y directa para decirle a alguien que quieres compartir la vida a su lado.</p>
+                    <a href="https://open.spotify.com/playlist/2PoIQAnGxzymkXlT2rk7Lt" target="_blank" rel="noopener noreferrer">
+                      De la playlist Canciones para dedicar
+                    </a>
+                  </div>
+                  <button class="song-recommendation-select" type="button" data-song-recommendation-select
+                          data-track-id="0RayTAbupCL4o2F54f9tCP" data-track-name="Contigo"
+                          data-track-artist="Los Panchos"
+                          data-track-url="https://open.spotify.com/track/0RayTAbupCL4o2F54f9tCP">
+                    Elegir esta canción
+                  </button>
+                </div>
+
+                <div class="song-recommendation-panel" id="recommendation-panel-miss" role="tabpanel"
+                     aria-labelledby="recommendation-tab-miss" data-song-recommendation-panel hidden>
+                  <div class="song-recommendation-copy">
+                    <p class="song-recommendation-intent">Para extrañar</p>
+                    <h3>La Gata Bajo la Lluvia <span>— Rocío Dúrcal</span></h3>
+                    <p>Para una despedida en la que todavía queda cariño y cuesta decir todo lo que se siente.</p>
+                    <a href="https://open.spotify.com/playlist/2PoIQAnGxzymkXlT2rk7Lt" target="_blank" rel="noopener noreferrer">
+                      De la playlist Canciones para dedicar
+                    </a>
+                  </div>
+                  <button class="song-recommendation-select" type="button" data-song-recommendation-select
+                          data-track-id="2kfSFdq2h0xLXq01em1zc7" data-track-name="La Gata Bajo la Lluvia"
+                          data-track-artist="Rocío Dúrcal"
+                          data-track-url="https://open.spotify.com/track/2kfSFdq2h0xLXq01em1zc7">
+                    Elegir esta canción
+                  </button>
+                </div>
+
+                <div class="song-recommendation-panel" id="recommendation-panel-celebrate" role="tabpanel"
+                     aria-labelledby="recommendation-tab-celebrate" data-song-recommendation-panel hidden>
+                  <div class="song-recommendation-copy">
+                    <p class="song-recommendation-intent">Para celebrar a alguien</p>
+                    <h3>Yellow <span>— Coldplay</span></h3>
+                    <p>Para reconocer a esa persona que iluminó una etapa y hacerle saber lo importante que es.</p>
+                    <a href="https://open.spotify.com/playlist/2PoIQAnGxzymkXlT2rk7Lt" target="_blank" rel="noopener noreferrer">
+                      De la playlist Canciones para dedicar
+                    </a>
+                  </div>
+                  <button class="song-recommendation-select" type="button" data-song-recommendation-select
+                          data-track-id="3AJwUDP919kvQ9QcozQPxg" data-track-name="Yellow"
+                          data-track-artist="Coldplay"
+                          data-track-url="https://open.spotify.com/track/3AJwUDP919kvQ9QcozQPxg">
+                    Elegir esta canción
+                  </button>
+                </div>
+                <p class="song-recommendation-status" data-song-recommendation-status aria-live="polite"></p>
+              </div>
+            </details>
             <details class="manual-song-entry" data-music-manual>
               <summary>¿No la encuentras? Escríbela manualmente</summary>
               <div class="manual-song-fields">
@@ -613,6 +775,41 @@
         <button type="button" class="btn-otra" onclick="resetPrivateDedicationForm()">Crear otra dedicatoria</button>
       </div>
     </div>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<!-- ══ NÚMEROS ══ -->
+<section class="stats-bg" id="numeros" aria-labelledby="stats-title">
+  <div class="stats-in">
+    <div class="stats-copy reveal-left">
+      <div class="eye">La comunidad</div>
+      <h2 class="ttl" id="stats-title">Una audiencia que<br><em>sí escucha.</em></h2>
+      <p class="sub">Historias musicales que se comparten, se guardan y terminan formando parte de la vida de alguien más.</p>
+    </div>
+    <dl class="stats-grid reveal" aria-label="Cifras aproximadas de Luis Felipe IV">
+      <div class="stat-item">
+        <dt>TikTok</dt>
+        <dd class="stat-value">476<span>mil</span></dd>
+        <dd class="stat-desc">seguidores</dd>
+      </div>
+      <div class="stat-item">
+        <dt>Instagram</dt>
+        <dd class="stat-value">278<span>mil</span></dd>
+        <dd class="stat-desc">seguidores</dd>
+      </div>
+      <div class="stat-item">
+        <dt>Contenido en TikTok</dt>
+        <dd class="stat-value">29.6<span>M</span></dd>
+        <dd class="stat-desc">me gusta acumulados</dd>
+      </div>
+      <div class="stat-item">
+        <dt>Playlist destacada</dt>
+        <dd class="stat-value">15.6<span>mil</span></dd>
+        <dd class="stat-desc">seguidores en Spotify</dd>
+      </div>
+    </dl>
   </div>
 </section>
 

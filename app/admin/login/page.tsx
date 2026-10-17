@@ -26,10 +26,10 @@ export default async function AdminLoginPage({
       <section aria-labelledby="admin-login-title" className={styles.panel}>
         <p className={styles.eyebrow}>Luis Felipe IV</p>
         <h1 className={styles.title} id="admin-login-title">
-          Administrar dedicatorias
+          Panel editorial
         </h1>
         <p className={styles.copy}>
-          Ingresa la contraseña de administración para continuar.
+          Ingresa la contraseña para administrar dedicatorias y contenido público.
         </p>
         {error === "invalid-credentials" ? (
           <p className={styles.error} role="alert">

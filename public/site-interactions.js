@@ -1,8 +1,10 @@
 /* ── NAV scroll ── */
 const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 60);
-}, {passive:true});
+function updateNavOnScroll(){
+  if(nav) nav.classList.toggle('scrolled', window.scrollY > 60);
+}
+window.addEventListener('scroll', updateNavOnScroll, {passive:true});
+updateNavOnScroll();
 
 /* ── Mobile menu ── */
 const mobileMenu = document.getElementById('mobMenu');
@@ -53,7 +55,7 @@ document.addEventListener('keydown', e=>{
   }
 });
 
-window.matchMedia('(min-width: 769px)').addEventListener('change', event => {
+window.matchMedia('(min-width: 961px)').addEventListener('change', event => {
   if(event.matches) menuClose();
 });
 
@@ -81,7 +83,23 @@ const revealObs = new IntersectionObserver((entries) => {
     }
   });
 }, {threshold:0.1, rootMargin:'0px 0px -36px 0px'});
-document.querySelectorAll('.reveal,.reveal-left,.reveal-scale').forEach(el => revealObs.observe(el));
+const revealElements = [...document.querySelectorAll('.reveal,.reveal-left,.reveal-scale')];
+revealElements.forEach(el => revealObs.observe(el));
+
+function revealVisibleElements(){
+  revealElements.forEach(el => {
+    if(el.classList.contains('on')) return;
+
+    const rect = el.getBoundingClientRect();
+    if(rect.top < window.innerHeight - 36 && rect.bottom > 0){
+      el.classList.add('on');
+      revealObs.unobserve(el);
+    }
+  });
+}
+window.addEventListener('scroll', revealVisibleElements, {passive:true});
+window.addEventListener('pageshow', revealVisibleElements, {once:true});
+requestAnimationFrame(() => requestAnimationFrame(revealVisibleElements));
 
 /* ── Gallery drag scroll ── */
 const track = document.getElementById('galleryTrack');
@@ -238,6 +256,19 @@ function clearMusicPickerResults(picker) {
   if (query) query.setAttribute('aria-expanded', 'false');
 }
 
+function resetSongRecommendationSelection(picker) {
+  const recommendations = picker.querySelector('[data-song-recommendations]');
+  if (!recommendations) return;
+
+  recommendations.querySelectorAll('[data-song-recommendation-select]').forEach(button => {
+    button.classList.remove('is-selected');
+    button.textContent = 'Elegir esta canción';
+  });
+
+  const status = recommendations.querySelector('[data-song-recommendation-status]');
+  if (status) status.textContent = '';
+}
+
 function clearMusicPickerSelection(picker) {
   picker.querySelector('[data-music-song]').value = '';
   picker.querySelector('[data-music-artist]').value = '';
@@ -245,11 +276,13 @@ function clearMusicPickerSelection(picker) {
   picker.querySelector('[data-music-url]').value = '';
   picker.classList.remove('is-selected', 'is-invalid');
   picker.querySelector('[data-music-clear]').hidden = true;
+  resetSongRecommendationSelection(picker);
 }
 
 function selectMusicTrack(picker, track) {
   const query = picker.querySelector('[data-music-query]');
 
+  resetSongRecommendationSelection(picker);
   picker.querySelector('[data-music-song]').value = track.name;
   picker.querySelector('[data-music-artist]').value = track.artists;
   picker.querySelector('[data-music-track-id]').value = track.id;
@@ -260,6 +293,68 @@ function selectMusicTrack(picker, track) {
   picker.querySelector('[data-music-clear]').hidden = false;
   clearMusicPickerResults(picker);
   setMusicPickerHelp(picker, 'Canción seleccionada de Spotify.');
+}
+
+function setupSongRecommendations(recommendations) {
+  const picker = recommendations.closest('[data-music-picker]');
+  const tabs = [...recommendations.querySelectorAll('[data-song-recommendation-tab]')];
+  const panels = [...recommendations.querySelectorAll('[data-song-recommendation-panel]')];
+  const selectButtons = [...recommendations.querySelectorAll('[data-song-recommendation-select]')];
+  const status = recommendations.querySelector('[data-song-recommendation-status]');
+
+  if (!picker || !tabs.length || !panels.length) return;
+
+  const activateTab = (activeTab, shouldFocus = false) => {
+    const activePanelId = activeTab.getAttribute('aria-controls');
+
+    tabs.forEach(tab => {
+      const isActive = tab === activeTab;
+      tab.setAttribute('aria-selected', String(isActive));
+      tab.setAttribute('tabindex', isActive ? '0' : '-1');
+    });
+
+    panels.forEach(panel => {
+      panel.hidden = panel.id !== activePanelId;
+    });
+
+    if (shouldFocus) activeTab.focus();
+  };
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => activateTab(tab));
+    tab.addEventListener('keydown', event => {
+      let nextIndex = null;
+
+      if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+      if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === 'Home') nextIndex = 0;
+      if (event.key === 'End') nextIndex = tabs.length - 1;
+      if (nextIndex === null) return;
+
+      event.preventDefault();
+      activateTab(tabs[nextIndex], true);
+    });
+  });
+
+  selectButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const { trackArtist, trackId, trackName, trackUrl } = button.dataset;
+      if (!trackArtist || !trackId || !trackName || !trackUrl) return;
+
+      selectMusicTrack(picker, {
+        artists: trackArtist,
+        id: trackId,
+        name: trackName,
+        url: trackUrl,
+      });
+      button.classList.add('is-selected');
+      button.textContent = 'Canción elegida';
+      if (status) status.textContent = `${trackName} de ${trackArtist} quedó seleccionada.`;
+    });
+  });
+
+  const selectedTab = tabs.find(tab => tab.getAttribute('aria-selected') === 'true') || tabs[0];
+  activateTab(selectedTab);
 }
 
 function renderMusicPickerResults(picker, tracks) {
@@ -396,6 +491,7 @@ function validateMusicPicker(form) {
 }
 
 document.querySelectorAll('[data-music-picker]').forEach(setupMusicPicker);
+document.querySelectorAll('[data-song-recommendations]').forEach(setupSongRecommendations);
 
 submitDedicationForm();
 initializeNewsletterForm();
