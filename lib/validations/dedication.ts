@@ -112,6 +112,7 @@ export const privateDedicationSubmissionSchema = z.object({
     .max(MAX_SONG_LENGTH),
   spotifyTrackId,
   spotifyUrl,
+  storyStyle: z.enum(["editorial", "noche", "tinta"]).default("editorial"),
   website: z.string().max(0, "Solicitud rechazada.").optional().default(""),
 });
 

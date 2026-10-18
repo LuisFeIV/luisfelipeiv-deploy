@@ -4,6 +4,8 @@ export type DedicationStatus =
   | "published"
   | "rejected";
 
+export type PrivateDedicationStyle = "editorial" | "noche" | "tinta";
+
 export type Database = {
   public: {
     Tables: {
@@ -67,6 +69,7 @@ export type Database = {
           song: string;
           spotify_track_id: string | null;
           spotify_url: string | null;
+          story_style: PrivateDedicationStyle;
         };
         Insert: {
           artist: string;
@@ -79,6 +82,7 @@ export type Database = {
           song: string;
           spotify_track_id?: string | null;
           spotify_url?: string | null;
+          story_style?: PrivateDedicationStyle;
         };
         Update: {
           artist?: string;
@@ -91,6 +95,7 @@ export type Database = {
           song?: string;
           spotify_track_id?: string | null;
           spotify_url?: string | null;
+          story_style?: PrivateDedicationStyle;
         };
         Relationships: [];
       };

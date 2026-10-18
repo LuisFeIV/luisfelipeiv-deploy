@@ -611,7 +611,14 @@
           <span class="carta-sello" aria-hidden="true">♫</span>
         </div>
 
-        <div class="carta-body">
+        <div class="dedication-progress" aria-label="Progreso de la dedicatoria">
+          <span class="is-current" data-dedication-progress="details"><b>1</b> Dedicatoria</span>
+          <span aria-hidden="true"></span>
+          <span data-dedication-progress="style"><b>2</b> Estilo</span>
+        </div>
+
+        <div data-dedication-step="details">
+          <div class="carta-body">
           <p class="form-note">
             No enviaremos correos ni contactaremos a la otra persona: tú decides cómo compartir tu dedicatoria.
           </p>
@@ -745,15 +752,75 @@
                       placeholder="Por qué esta canción, por qué ahora, por qué ella o él..."
                       required aria-required="true" rows="4"></textarea>
           </div>
+          </div>
+
+          <div class="carta-firma">
+            <p class="firma-txt">Primero revisa cómo se verá.</p>
+            <button type="button" class="btn-enviar" id="dedicarContinueBtn"
+                    style="background:var(--ink);" onclick="showPrivateDedicationStyleStep()">
+              Elegir estilo
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg>
+            </button>
+          </div>
         </div>
 
-        <div class="carta-firma">
-          <p class="firma-txt">Tú decides cómo y cuándo compartirla.</p>
-          <button type="submit" class="btn-enviar" id="dedicarBtn"
-                  style="background:var(--ink);">
-            Crear dedicatoria
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          </button>
+        <div class="dedication-style-step" data-dedication-step="style" hidden>
+          <section class="story-maker story-maker-before-link" aria-labelledby="storyMakerTitle">
+            <div class="story-maker-copy">
+              <p class="story-maker-kicker">Paso 2 de 2</p>
+              <h4 id="storyMakerTitle" tabindex="-1">Elige cómo se verá.</h4>
+              <p>Tu enlace privado y la imagen para historias usarán este estilo.</p>
+            </div>
+
+            <fieldset class="story-style-picker">
+              <legend>Elige un estilo</legend>
+              <label class="story-style-option">
+                <input type="radio" name="storyStyle" value="editorial" checked/>
+                <span class="story-style-swatch story-style-swatch-editorial" aria-hidden="true"><i></i></span>
+                <span>Editorial</span>
+              </label>
+              <label class="story-style-option">
+                <input type="radio" name="storyStyle" value="noche"/>
+                <span class="story-style-swatch story-style-swatch-noche" aria-hidden="true"><i></i></span>
+                <span>Noche</span>
+              </label>
+              <label class="story-style-option">
+                <input type="radio" name="storyStyle" value="tinta"/>
+                <span class="story-style-swatch story-style-swatch-tinta" aria-hidden="true"><i></i></span>
+                <span>Tinta roja</span>
+              </label>
+            </fieldset>
+
+            <div class="story-card-stage">
+              <div class="story-card-preview" data-story-preview data-story-style="editorial" aria-label="Vista previa de la dedicatoria">
+                <div class="story-card-orbit" aria-hidden="true"></div>
+                <div class="story-card-accent" aria-hidden="true"></div>
+                <div class="story-card-brand">LUIS FELIPE IV <span>·</span> DEDICATORIAS</div>
+                <div class="story-card-content">
+                  <p class="story-card-meta">Una canción para</p>
+                  <p class="story-card-recipient" data-story-recipient>esa persona</p>
+                  <div class="story-card-rule" aria-hidden="true"></div>
+                  <p class="story-card-song" data-story-song>Tu canción</p>
+                  <p class="story-card-artist" data-story-artist>El artista</p>
+                  <p class="story-card-message" data-story-message>Tu mensaje aparecerá aquí.</p>
+                </div>
+                <div class="story-card-footer">
+                  <span data-story-sender>De alguien especial</span>
+                  <span>luisfelipeiv.com</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="carta-firma dedication-style-actions">
+            <button type="button" class="btn-step-back" onclick="showPrivateDedicationDetailsStep()">
+              Volver
+            </button>
+            <button type="submit" class="btn-enviar" id="dedicarBtn" style="background:var(--ink);">
+              Crear dedicatoria
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
         </div>
       </form>
 
@@ -766,9 +833,33 @@
         <p class="share-link-help" id="dedicarShareHelp">Cualquier persona con este enlace podrá ver la dedicatoria.</p>
         <div class="share-actions">
           <button class="btn-share-primary" type="button" onclick="sharePrivateDedication()">Compartir</button>
-          <button class="btn-share-secondary" type="button" onclick="copyPrivateDedicationLink()">Copiar enlace</button>
+          <button class="btn-share-secondary" type="button" data-copy-dedication-link onclick="copyPrivateDedicationLink()">Copiar enlace</button>
           <a class="btn-share-secondary" id="dedicarWhatsApp" href="#" target="_blank" rel="noreferrer">WhatsApp</a>
         </div>
+
+        <section class="story-maker story-download" aria-labelledby="storyDownloadTitle">
+          <div class="story-maker-copy">
+            <p class="story-maker-kicker">Para historias</p>
+            <h4 id="storyDownloadTitle">Tu imagen también está lista.</h4>
+            <p>Descarga la tarjeta vertical en el estilo que elegiste.</p>
+          </div>
+          <figure class="story-image-preview" data-story-image-preview aria-busy="true">
+            <div class="story-image-preview-loading" data-story-image-loading>Preparando vista previa…</div>
+            <img
+              data-story-preview-image
+              alt="Vista previa de la imagen de la dedicatoria"
+              width="270"
+              height="480"
+              hidden
+            />
+          </figure>
+          <div class="story-maker-actions">
+            <button class="btn-share-primary story-share-button" type="button" onclick="downloadPrivateDedicationStory()">Descargar imagen</button>
+            <button class="btn-share-secondary" type="button" onclick="sharePrivateDedicationStory()">Compartir imagen</button>
+          </div>
+          <p class="story-maker-status" data-story-status aria-live="polite"></p>
+        </section>
+
         <button type="button" class="btn-otra" onclick="resetPrivateDedicationForm()">Crear otra dedicatoria</button>
       </div>
     </div>

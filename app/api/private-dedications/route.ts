@@ -35,6 +35,13 @@ function getPublicOrigin(request: Request) {
   return new URL(request.url).origin;
 }
 
+function isMissingStoryStyleColumn(error: { code?: string; message: string }) {
+  return (
+    (error.code === "42703" || error.code === "PGRST204") &&
+    error.message.includes("story_style")
+  );
+}
+
 export async function POST(request: Request) {
   let body: unknown;
 
@@ -66,12 +73,12 @@ export async function POST(request: Request) {
   }
 
   const shareToken = createShareToken();
-  const sharePath = `/d/${createFriendlySlug(dedication.recipientName)}--${shareToken}`;
+  const sharePath = `/d/${createFriendlySlug(dedication.recipientName)}--${dedication.storyStyle}--${shareToken}`;
   const shareUrl = new URL(sharePath, getPublicOrigin(request)).toString();
 
   try {
     const supabase = createSupabaseServerClient();
-    const { error } = await supabase.from("private_dedications").insert({
+    const insertData = {
       artist: dedication.artist,
       message: dedication.message,
       recipient_name: dedication.recipientName,
@@ -80,7 +87,16 @@ export async function POST(request: Request) {
       song: dedication.song,
       spotify_track_id: dedication.spotifyTrackId ?? null,
       spotify_url: dedication.spotifyUrl ?? null,
+    };
+    let { error } = await supabase.from("private_dedications").insert({
+      ...insertData,
+      story_style: dedication.storyStyle,
     });
+
+    if (error && isMissingStoryStyleColumn(error)) {
+      const legacyInsert = await supabase.from("private_dedications").insert(insertData);
+      error = legacyInsert.error;
+    }
 
     if (error) {
       console.error("Unable to save private dedication.", error);

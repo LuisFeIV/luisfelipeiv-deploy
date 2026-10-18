@@ -6,6 +6,7 @@ import { cache } from "react";
 
 import styles from "./page.module.css";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import type { PrivateDedicationStyle } from "@/lib/supabase/database.types";
 
 type PrivateDedicationPageProps = {
   params: Promise<{
@@ -29,6 +30,28 @@ function hashShareToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
 
+function isPrivateDedicationStyle(value: string): value is PrivateDedicationStyle {
+  return ["editorial", "noche", "tinta"].includes(value);
+}
+
+function getExplicitStoryStyleFromSlug(slug: string) {
+  const segments = slug.split("--");
+  const style = segments.at(-2) ?? "";
+
+  return isPrivateDedicationStyle(style) ? style : null;
+}
+
+function getStoryStyleFromSlug(slug: string): PrivateDedicationStyle {
+  return getExplicitStoryStyleFromSlug(slug) ?? "editorial";
+}
+
+function isMissingStoryStyleColumn(error: { code?: string; message: string }) {
+  return (
+    (error.code === "42703" || error.code === "PGRST204") &&
+    error.message.includes("story_style")
+  );
+}
+
 const getPrivateDedication = cache(async (slug: string) => {
   const token = getShareToken(slug);
 
@@ -41,10 +64,32 @@ const getPrivateDedication = cache(async (slug: string) => {
     const { data, error } = await supabase
       .from("private_dedications")
       .select(
-        "sender_name, recipient_name, song, artist, message, spotify_track_id, spotify_url",
+        "sender_name, recipient_name, song, artist, message, spotify_track_id, spotify_url, story_style",
       )
       .eq("share_token_hash", hashShareToken(token))
       .maybeSingle();
+
+    if (error && isMissingStoryStyleColumn(error)) {
+      const legacyResult = await supabase
+        .from("private_dedications")
+        .select(
+          "sender_name, recipient_name, song, artist, message, spotify_track_id, spotify_url",
+        )
+        .eq("share_token_hash", hashShareToken(token))
+        .maybeSingle();
+
+      if (legacyResult.error || !legacyResult.data) {
+        if (legacyResult.error) {
+          console.error("Unable to load private dedication.", legacyResult.error);
+        }
+        return null;
+      }
+
+      return {
+        ...legacyResult.data,
+        story_style: getStoryStyleFromSlug(slug),
+      };
+    }
 
     if (error) {
       console.error("Unable to load private dedication.", error);
@@ -52,7 +97,12 @@ const getPrivateDedication = cache(async (slug: string) => {
       return null;
     }
 
-    return data;
+    return data
+      ? {
+          ...data,
+          story_style: getExplicitStoryStyleFromSlug(slug) ?? data.story_style,
+        }
+      : null;
   } catch (error) {
     console.error("Unable to initialize Supabase.", error);
 
@@ -101,7 +151,7 @@ export default async function PrivateDedicationPage({
   }
 
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-story-style={dedication.story_style}>
       <article className={styles.card}>
         <header className={styles.top}>
           <p className={styles.brand}>

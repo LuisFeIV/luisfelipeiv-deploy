@@ -497,9 +497,14 @@ submitDedicationForm();
 initializeNewsletterForm();
 
 let privateDedicationUrl = '';
+let privateDedicationStoryData = null;
+let privateDedicationStoryStyle = 'editorial';
+let privateDedicationStoryBlob = null;
+let privateDedicationStoryPalette = null;
+let privateDedicationStoryPreviewUrl = '';
 
 function setCopyButtonLabel(label) {
-  const button = document.querySelector('#dedicarOk .btn-share-secondary[type="button"]');
+  const button = document.querySelector('[data-copy-dedication-link]');
   if (!button) return;
 
   button.textContent = label;
@@ -540,6 +545,372 @@ async function sharePrivateDedication() {
   await copyPrivateDedicationLink();
 }
 
+function setPrivateDedicationStoryStatus(message) {
+  const status = document.querySelector('[data-story-status]');
+  if (status) status.textContent = message;
+}
+
+function updatePrivateDedicationStoryPreview() {
+  const preview = document.querySelector('[data-story-preview]');
+  if (!preview || !privateDedicationStoryData) return;
+
+  preview.dataset.storyStyle = privateDedicationStoryStyle;
+  preview.querySelector('[data-story-recipient]').textContent = privateDedicationStoryData.recipientName;
+  preview.querySelector('[data-story-song]').textContent = privateDedicationStoryData.song;
+  preview.querySelector('[data-story-artist]').textContent = privateDedicationStoryData.artist;
+  preview.querySelector('[data-story-message]').textContent = privateDedicationStoryData.message;
+  preview.querySelector('[data-story-sender]').textContent = privateDedicationStoryData.senderName
+    ? `De ${privateDedicationStoryData.senderName}`
+    : 'De alguien especial';
+  privateDedicationStoryBlob = null;
+  privateDedicationStoryPalette = getStoryPalette();
+  setPrivateDedicationStoryStatus('');
+}
+
+function initializePrivateDedicationStoryDesigner() {
+  document.querySelectorAll('input[name="storyStyle"]').forEach(input => {
+    input.addEventListener('change', () => {
+      if (!input.checked) return;
+
+      privateDedicationStoryStyle = input.value;
+      updatePrivateDedicationStoryPreview();
+    });
+  });
+}
+
+function getStoryPalette() {
+  const preview = document.querySelector('[data-story-preview]');
+  const accent = preview?.querySelector('.story-card-accent');
+  const meta = preview?.querySelector('.story-card-meta');
+
+  if (!preview || !accent || !meta) return null;
+
+  const previewStyle = window.getComputedStyle(preview);
+  return {
+    accent: window.getComputedStyle(accent).backgroundColor,
+    background: previewStyle.backgroundColor,
+    foreground: previewStyle.color,
+    muted: window.getComputedStyle(meta).color,
+  };
+}
+
+function getPrivateDedicationFormData(form) {
+  const formData = new FormData(form);
+  const value = name => String(formData.get(name) ?? '');
+
+  return {
+    artist: value('artist'),
+    message: value('message'),
+    recipientName: value('recipientName'),
+    senderName: value('senderName'),
+    song: value('song'),
+    spotifyTrackId: value('spotifyTrackId'),
+    spotifyUrl: value('spotifyUrl'),
+    storyStyle: value('storyStyle') || 'editorial',
+    website: value('bot-field-d'),
+  };
+}
+
+function validatePrivateDedicationDetails(form) {
+  let valid = true;
+  form.querySelectorAll('[required]').forEach(field => {
+    field.classList.remove('err');
+    if (!field.value.trim()) {
+      field.classList.add('err');
+      valid = false;
+    }
+  });
+
+  const musicPickerValid = validateMusicPicker(form);
+  if (valid && musicPickerValid) return true;
+
+  const invalidField = form.querySelector('.err');
+  if (invalidField) invalidField.focus();
+  return false;
+}
+
+function setPrivateDedicationStep(step) {
+  const detailsStep = document.querySelector('[data-dedication-step="details"]');
+  const styleStep = document.querySelector('[data-dedication-step="style"]');
+  const detailsProgress = document.querySelector('[data-dedication-progress="details"]');
+  const styleProgress = document.querySelector('[data-dedication-progress="style"]');
+
+  if (!detailsStep || !styleStep || !detailsProgress || !styleProgress) return;
+
+  detailsStep.hidden = step !== 'details';
+  styleStep.hidden = step !== 'style';
+  detailsProgress.classList.toggle('is-current', step === 'details');
+  styleProgress.classList.toggle('is-current', step === 'style');
+}
+
+function showPrivateDedicationStyleStep() {
+  const form = document.getElementById('dedicarForm');
+  const heading = document.getElementById('storyMakerTitle');
+  if (!form || !validatePrivateDedicationDetails(form)) return;
+
+  const data = getPrivateDedicationFormData(form);
+  privateDedicationStoryData = data;
+  privateDedicationStoryStyle = data.storyStyle;
+  updatePrivateDedicationStoryPreview();
+  setPrivateDedicationStep('style');
+
+  requestAnimationFrame(() => {
+    heading?.focus({ preventScroll: true });
+    heading?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+function showPrivateDedicationDetailsStep() {
+  const form = document.getElementById('dedicarForm');
+  setPrivateDedicationStep('details');
+
+  requestAnimationFrame(() => {
+    form?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+function wrapStoryText(context, text, maxWidth, maxLines) {
+  const words = text.trim().split(/\s+/);
+  const lines = [];
+  let currentLine = '';
+
+  words.forEach(word => {
+    const candidate = currentLine ? `${currentLine} ${word}` : word;
+    if (context.measureText(candidate).width <= maxWidth || !currentLine) {
+      currentLine = candidate;
+      return;
+    }
+
+    lines.push(currentLine);
+    currentLine = word;
+  });
+
+  if (currentLine) lines.push(currentLine);
+  if (lines.length <= maxLines) return lines;
+
+  const visibleLines = lines.slice(0, maxLines);
+  let lastLine = visibleLines[maxLines - 1];
+  while (context.measureText(`${lastLine}…`).width > maxWidth && lastLine.length > 1) {
+    lastLine = lastLine.slice(0, -1);
+  }
+  visibleLines[maxLines - 1] = `${lastLine.trimEnd()}…`;
+  return visibleLines;
+}
+
+function drawStoryLines(context, lines, x, startY, lineHeight) {
+  lines.forEach((line, index) => context.fillText(line, x, startY + (index * lineHeight)));
+  return startY + (lines.length * lineHeight);
+}
+
+function drawStoryDecoration(context, palette) {
+  context.fillStyle = palette.accent;
+  context.fillRect(0, 0, 1080, 24);
+
+  context.save();
+  if (privateDedicationStoryStyle === 'editorial') {
+    context.globalAlpha = .9;
+    context.lineWidth = 4;
+    context.strokeStyle = palette.accent;
+    context.beginPath();
+    context.arc(1050, 420, 190, 0, Math.PI * 2);
+    context.stroke();
+  } else {
+    context.globalAlpha = privateDedicationStoryStyle === 'tinta' ? .45 : .95;
+    context.lineWidth = privateDedicationStoryStyle === 'tinta' ? 86 : 112;
+    context.strokeStyle = palette.accent;
+    context.beginPath();
+    context.arc(1060, 405, 245, 0, Math.PI * 2);
+    context.stroke();
+  }
+  context.restore();
+}
+
+async function renderPrivateDedicationStory() {
+  if (!privateDedicationStoryData) throw new Error('No hay datos para crear la imagen.');
+
+  await document.fonts.ready;
+  const palette = privateDedicationStoryPalette || getStoryPalette();
+  if (!palette) throw new Error('No se pudo preparar el estilo de la imagen.');
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1920;
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('Tu navegador no pudo crear la imagen.');
+
+  context.fillStyle = palette.background;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  drawStoryDecoration(context, palette);
+
+  context.fillStyle = palette.muted;
+  context.font = '500 25px "JetBrains Mono", monospace';
+  context.letterSpacing = '3px';
+  context.fillText('LUIS FELIPE IV  ·  DEDICATORIAS', 100, 140);
+
+  context.fillStyle = palette.muted;
+  context.font = '500 27px "JetBrains Mono", monospace';
+  context.letterSpacing = '5px';
+  context.fillText('UNA CANCIÓN PARA', 100, 430);
+
+  context.fillStyle = palette.foreground;
+  context.font = 'italic 800 94px Fraunces, Georgia, serif';
+  context.letterSpacing = '-3px';
+  const recipientLines = wrapStoryText(context, privateDedicationStoryData.recipientName, 790, 2);
+  const recipientBottom = drawStoryLines(context, recipientLines, 100, 545, 94);
+
+  context.fillStyle = palette.accent;
+  context.fillRect(100, recipientBottom + 38, 132, 8);
+
+  context.fillStyle = palette.foreground;
+  context.font = '800 72px Fraunces, Georgia, serif';
+  context.letterSpacing = '-2px';
+  const songLines = wrapStoryText(context, privateDedicationStoryData.song, 820, 2);
+  const songBottom = drawStoryLines(context, songLines, 100, recipientBottom + 170, 76);
+
+  context.fillStyle = palette.muted;
+  context.font = '500 27px "JetBrains Mono", monospace';
+  context.letterSpacing = '3px';
+  const artistLines = wrapStoryText(context, privateDedicationStoryData.artist.toUpperCase(), 820, 2);
+  const artistBottom = drawStoryLines(context, artistLines, 100, songBottom + 12, 38);
+
+  context.fillStyle = palette.accent;
+  context.font = '800 72px Fraunces, Georgia, serif';
+  context.letterSpacing = '0px';
+  context.fillText('“', 96, artistBottom + 105);
+
+  context.fillStyle = palette.foreground;
+  context.globalAlpha = .86;
+  context.font = 'italic 400 38px Inter, system-ui, sans-serif';
+  const messageLines = wrapStoryText(context, privateDedicationStoryData.message, 820, 6);
+  drawStoryLines(context, messageLines, 140, artistBottom + 100, 56);
+  context.globalAlpha = 1;
+
+  context.fillStyle = palette.muted;
+  context.font = '500 22px "JetBrains Mono", monospace';
+  context.letterSpacing = '2px';
+  const sender = privateDedicationStoryData.senderName
+    ? `DE ${privateDedicationStoryData.senderName.toUpperCase()}`
+    : 'DE ALGUIEN ESPECIAL';
+  context.fillText(sender, 100, 1800, 500);
+  context.textAlign = 'right';
+  context.fillText('LUISFELIPEIV.COM', 980, 1800);
+  context.textAlign = 'left';
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if (blob) resolve(blob);
+      else reject(new Error('No se pudo exportar la imagen.'));
+    }, 'image/png');
+  });
+}
+
+async function getPrivateDedicationStoryBlob() {
+  if (!privateDedicationStoryBlob) {
+    privateDedicationStoryBlob = await renderPrivateDedicationStory();
+  }
+  return privateDedicationStoryBlob;
+}
+
+function resetPrivateDedicationStoryImagePreview() {
+  const preview = document.querySelector('[data-story-image-preview]');
+  const image = document.querySelector('[data-story-preview-image]');
+  const loading = document.querySelector('[data-story-image-loading]');
+
+  if (privateDedicationStoryPreviewUrl) {
+    URL.revokeObjectURL(privateDedicationStoryPreviewUrl);
+    privateDedicationStoryPreviewUrl = '';
+  }
+
+  if (image) {
+    image.hidden = true;
+    image.removeAttribute('src');
+  }
+  if (loading) loading.textContent = 'Preparando vista previa…';
+  if (preview) {
+    preview.classList.remove('is-ready');
+    preview.setAttribute('aria-busy', 'true');
+  }
+}
+
+async function showPrivateDedicationStoryImagePreview() {
+  const preview = document.querySelector('[data-story-image-preview]');
+  const image = document.querySelector('[data-story-preview-image]');
+  const loading = document.querySelector('[data-story-image-loading]');
+  const previewData = privateDedicationStoryData;
+
+  if (!preview || !image || !previewData) return;
+
+  resetPrivateDedicationStoryImagePreview();
+
+  try {
+    const blob = await getPrivateDedicationStoryBlob();
+    if (privateDedicationStoryData !== previewData) return;
+
+    privateDedicationStoryPreviewUrl = URL.createObjectURL(blob);
+    image.alt = `Vista previa de la dedicatoria para ${previewData.recipientName}`;
+    image.src = privateDedicationStoryPreviewUrl;
+    await image.decode();
+
+    if (privateDedicationStoryData !== previewData) return;
+    image.hidden = false;
+    preview.classList.add('is-ready');
+    preview.setAttribute('aria-busy', 'false');
+  } catch {
+    if (loading) loading.textContent = 'No pudimos mostrar la vista previa.';
+    preview.setAttribute('aria-busy', 'false');
+  }
+}
+
+function savePrivateDedicationStoryBlob(blob) {
+  const downloadUrl = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+  link.download = 'dedicatoria-luis-felipe-iv.png';
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+}
+
+async function downloadPrivateDedicationStory() {
+  try {
+    setPrivateDedicationStoryStatus('Preparando tu imagen…');
+    const blob = await getPrivateDedicationStoryBlob();
+    savePrivateDedicationStoryBlob(blob);
+    setPrivateDedicationStoryStatus('Imagen descargada.');
+  } catch (error) {
+    setPrivateDedicationStoryStatus(error instanceof Error ? error.message : 'No se pudo crear la imagen.');
+  }
+}
+
+async function sharePrivateDedicationStory() {
+  try {
+    setPrivateDedicationStoryStatus('Preparando tu imagen…');
+    const blob = await getPrivateDedicationStoryBlob();
+    const file = new File([blob], 'dedicatoria-luis-felipe-iv.png', { type: 'image/png' });
+    const canShareFile = navigator.share && navigator.canShare?.({ files: [file] });
+
+    if (!canShareFile) {
+      savePrivateDedicationStoryBlob(blob);
+      setPrivateDedicationStoryStatus('Imagen descargada.');
+      return;
+    }
+
+    await navigator.share({
+      files: [file],
+      title: 'Mi dedicatoria musical',
+      text: 'Una canción puede decirlo todo.',
+    });
+    setPrivateDedicationStoryStatus('Imagen compartida.');
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      setPrivateDedicationStoryStatus('No se compartió la imagen. Puedes intentarlo de nuevo.');
+      return;
+    }
+    setPrivateDedicationStoryStatus(error instanceof Error ? error.message : 'No se pudo compartir la imagen.');
+  }
+}
+
 function submitPrivateDedicationForm() {
   const form = document.getElementById('dedicarForm');
   const button = document.getElementById('dedicarBtn');
@@ -552,25 +923,12 @@ function submitPrivateDedicationForm() {
   form.addEventListener('submit', async event => {
     event.preventDefault();
 
-    let valid = true;
-    form.querySelectorAll('[required]').forEach(field => {
-      field.classList.remove('err');
-      if (!field.value.trim()) {
-        field.classList.add('err');
-        valid = false;
-      }
-    });
-
-    const musicPickerValid = validateMusicPicker(form);
-
-    if (!valid || !musicPickerValid) {
-      const invalidField = form.querySelector('.err');
-      if (invalidField) invalidField.focus();
+    if (!validatePrivateDedicationDetails(form)) {
+      setPrivateDedicationStep('details');
       return;
     }
 
-    const formData = new FormData(form);
-    const value = name => String(formData.get(name) ?? '');
+    const data = getPrivateDedicationFormData(form);
     const originalButton = button.innerHTML;
 
     button.disabled = true;
@@ -581,14 +939,15 @@ function submitPrivateDedicationForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          artist: value('artist'),
-          message: value('message'),
-          recipientName: value('recipientName'),
-          senderName: value('senderName'),
-          song: value('song'),
-          spotifyTrackId: value('spotifyTrackId'),
-          spotifyUrl: value('spotifyUrl'),
-          website: value('bot-field-d'),
+          artist: data.artist,
+          message: data.message,
+          recipientName: data.recipientName,
+          senderName: data.senderName,
+          song: data.song,
+          spotifyTrackId: data.spotifyTrackId,
+          spotifyUrl: data.spotifyUrl,
+          storyStyle: data.storyStyle,
+          website: data.website,
         }),
       });
       const payload = await response.json();
@@ -604,10 +963,20 @@ function submitPrivateDedicationForm() {
       }
 
       privateDedicationUrl = shareUrl;
+      privateDedicationStoryStyle = data.storyStyle;
+      privateDedicationStoryData = {
+        artist: data.artist,
+        message: data.message,
+        recipientName: data.recipientName,
+        senderName: data.senderName,
+        song: data.song,
+      };
+      updatePrivateDedicationStoryPreview();
       linkInput.value = privateDedicationUrl;
       whatsApp.href = `https://wa.me/?text=${encodeURIComponent(`Te hice una dedicatoria musical. ${privateDedicationUrl}`)}`;
       form.style.display = 'none';
       success.style.display = 'block';
+      showPrivateDedicationStoryImagePreview();
 
       requestAnimationFrame(() => {
         success.focus({ preventScroll: true });
@@ -630,11 +999,18 @@ function resetPrivateDedicationForm() {
   if (!form || !success) return;
 
   privateDedicationUrl = '';
+  privateDedicationStoryData = null;
+  privateDedicationStoryBlob = null;
+  privateDedicationStoryPalette = null;
+  privateDedicationStoryStyle = 'editorial';
+  resetPrivateDedicationStoryImagePreview();
   form.reset();
+  setPrivateDedicationStep('details');
   form.style.display = '';
   success.style.display = 'none';
   if (linkInput) linkInput.value = '';
   setCopyButtonLabel('Copiar enlace');
+  setPrivateDedicationStoryStatus('');
 
   requestAnimationFrame(() => {
     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -701,6 +1077,7 @@ function switchTab(tab) {
 
 /* ── Form dedicar ── */
 submitPrivateDedicationForm();
+initializePrivateDedicationStoryDesigner();
 
 Object.assign(window, {
   menuOpen,
@@ -709,8 +1086,12 @@ Object.assign(window, {
   carouselPrev,
   carouselNext,
   copyPrivateDedicationLink,
+  downloadPrivateDedicationStory,
   resetDedicationForm,
   resetPrivateDedicationForm,
   sharePrivateDedication,
+  sharePrivateDedicationStory,
+  showPrivateDedicationDetailsStep,
+  showPrivateDedicationStyleStep,
   switchTab,
 });
