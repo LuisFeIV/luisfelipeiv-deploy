@@ -593,11 +593,17 @@ function submitPrivateDedicationForm() {
       });
       const payload = await response.json();
 
-      if (!response.ok || typeof payload.sharePath !== 'string') {
+      const shareUrl = typeof payload.shareUrl === 'string'
+        ? payload.shareUrl
+        : typeof payload.sharePath === 'string'
+          ? new URL(payload.sharePath, window.location.origin).toString()
+          : '';
+
+      if (!response.ok || !shareUrl) {
         throw new Error('Unable to create private dedication.');
       }
 
-      privateDedicationUrl = new URL(payload.sharePath, window.location.origin).toString();
+      privateDedicationUrl = shareUrl;
       linkInput.value = privateDedicationUrl;
       whatsApp.href = `https://wa.me/?text=${encodeURIComponent(`Te hice una dedicatoria musical. ${privateDedicationUrl}`)}`;
       form.style.display = 'none';

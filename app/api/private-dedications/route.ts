@@ -5,6 +5,8 @@ import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { privateDedicationSubmissionSchema } from "@/lib/validations/dedication";
 
+const PRODUCTION_PUBLIC_ORIGIN = "https://www.luisfelipeiv.com";
+
 function createShareToken() {
   return randomBytes(12).toString("base64url");
 }
@@ -23,6 +25,14 @@ function createFriendlySlug(recipientName: string) {
     .slice(0, 48);
 
   return normalizedName ? `para-${normalizedName}` : "una-cancion";
+}
+
+function getPublicOrigin(request: Request) {
+  if (process.env.NODE_ENV === "production") {
+    return PRODUCTION_PUBLIC_ORIGIN;
+  }
+
+  return new URL(request.url).origin;
 }
 
 export async function POST(request: Request) {
@@ -57,6 +67,7 @@ export async function POST(request: Request) {
 
   const shareToken = createShareToken();
   const sharePath = `/d/${createFriendlySlug(dedication.recipientName)}--${shareToken}`;
+  const shareUrl = new URL(sharePath, getPublicOrigin(request)).toString();
 
   try {
     const supabase = createSupabaseServerClient();
@@ -88,5 +99,5 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({ sharePath, success: true }, { status: 201 });
+  return NextResponse.json({ sharePath, shareUrl, success: true }, { status: 201 });
 }
