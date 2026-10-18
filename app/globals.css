@@ -656,6 +656,10 @@ button{font-family:var(--fb);cursor:pointer;border:none;background:none;
   transform:translateY(-8px) rotate(-1deg) scale(1.02);
   box-shadow:0 24px 60px rgba(0,0,0,.6);
 }
+.gcard[data-link-status="pending"]{cursor:not-allowed;}
+.gcard[data-link-status="pending"]:hover{transform:none;box-shadow:none;}
+.gcard[data-link-status="pending"] .gcard-play{display:none;}
+.gcard[data-link-status="pending"]:hover .gcard-thumb img{transform:none;filter:brightness(.85);}
 
 .gcard-thumb{
   aspect-ratio:9/16;

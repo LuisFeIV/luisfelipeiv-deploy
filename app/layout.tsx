@@ -4,13 +4,14 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.luisfelipeiv.com"),
   title: "Luis Felipe IV — Historias que se sienten",
   description: "Cuento las historias detrás de las canciones que marcaron tu vida.",
   openGraph: {
     title: "Luis Felipe IV — Historias que se sienten",
     description: "Las canciones que te marcaron tienen historia.",
     type: "website",
-    url: "https://luisfelipeiv.com",
+    url: "https://www.luisfelipeiv.com",
   },
   twitter: {
     card: "summary_large_image",
