@@ -1,17 +1,48 @@
 .page {
+  --dedication-page: var(--w);
+  --dedication-card: var(--w);
+  --dedication-top: var(--ink);
+  --dedication-foreground: var(--ink);
+  --dedication-secondary: var(--ink2);
+  --dedication-muted: var(--ink3);
+  --dedication-highlight: var(--red);
+  --dedication-border: var(--w3);
   align-items: center;
-  background: var(--w);
+  background: var(--dedication-page);
+  color: var(--dedication-foreground);
   display: flex;
   justify-content: center;
   min-height: 100dvh;
   padding: 24px;
 }
 
+.page[data-story-style="noche"] {
+  --dedication-page: var(--blk);
+  --dedication-card: var(--blk2);
+  --dedication-top: var(--red2);
+  --dedication-foreground: var(--w);
+  --dedication-secondary: var(--w2);
+  --dedication-muted: var(--w3);
+  --dedication-highlight: var(--red);
+  --dedication-border: var(--bbd);
+}
+
+.page[data-story-style="tinta"] {
+  --dedication-page: var(--w2);
+  --dedication-card: var(--red2);
+  --dedication-top: var(--ink);
+  --dedication-foreground: var(--w);
+  --dedication-secondary: var(--w2);
+  --dedication-muted: var(--w3);
+  --dedication-highlight: var(--w);
+  --dedication-border: color-mix(in srgb, var(--w) 28%, transparent);
+}
+
 .card {
-  background: var(--w);
-  border: 1px solid var(--w3);
+  background: var(--dedication-card);
+  border: 1px solid var(--dedication-border);
   border-radius: 18px;
-  box-shadow: 0 20px 45px rgba(20, 18, 16, 0.08);
+  box-shadow: 0 20px 45px color-mix(in srgb, var(--ink) 14%, transparent);
   max-width: 620px;
   overflow: hidden;
   width: 100%;
@@ -19,7 +50,7 @@
 
 .top {
   align-items: center;
-  background: var(--ink);
+  background: var(--dedication-top);
   color: var(--w);
   display: flex;
   justify-content: space-between;
@@ -34,12 +65,12 @@
 }
 
 .brand span {
-  color: var(--red);
+  color: var(--dedication-highlight);
 }
 
 .mark {
   align-items: center;
-  border: 1px solid rgba(247, 243, 236, 0.35);
+  border: 1px solid color-mix(in srgb, var(--w) 35%, transparent);
   border-radius: 50%;
   display: flex;
   font-family: var(--fd);
@@ -54,7 +85,7 @@
 }
 
 .eyebrow {
-  color: var(--red);
+  color: var(--dedication-highlight);
   font-family: var(--fm);
   font-size: 12px;
   letter-spacing: 0.12em;
@@ -69,12 +100,12 @@
 }
 
 .title span {
-  color: var(--red);
+  color: var(--dedication-highlight);
   font-style: italic;
 }
 
 .song {
-  border-top: 1px solid var(--w3);
+  border-top: 1px solid var(--dedication-border);
   font-family: var(--fd);
   font-size: clamp(26px, 5vw, 38px);
   line-height: 1.1;
@@ -83,7 +114,7 @@
 }
 
 .artist {
-  color: var(--red);
+  color: var(--dedication-highlight);
   font-family: var(--fm);
   font-size: 12px;
   letter-spacing: 0.1em;
@@ -100,7 +131,7 @@
 }
 
 .message {
-  color: var(--ink2);
+  color: var(--dedication-secondary);
   font-size: 18px;
   line-height: 1.75;
   margin-top: 28px;
@@ -108,21 +139,21 @@
 }
 
 .sender {
-  border-top: 1px solid var(--w3);
-  color: var(--ink3);
+  border-top: 1px solid var(--dedication-border);
+  color: var(--dedication-muted);
   font-size: 14px;
   margin-top: 32px;
   padding-top: 20px;
 }
 
 .sender strong {
-  color: var(--ink);
+  color: var(--dedication-foreground);
   font-family: var(--fd);
   font-size: 18px;
 }
 
 .privacy {
-  color: var(--ink3);
+  color: var(--dedication-muted);
   font-family: var(--fm);
   font-size: 10px;
   letter-spacing: 0.05em;
