@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createDedication } from "@/lib/db/dedications";
 import { dedicationSubmissionSchema } from "@/lib/validations/dedication";
 
 export async function POST(request: Request) {
@@ -34,8 +34,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const supabase = createSupabaseServerClient();
-    const { error } = await supabase.from("dedications").insert({
+    await createDedication({
       allow_publishing: dedication.allowPublishing,
       artist: dedication.artist,
       instagram: dedication.instagram ?? null,
@@ -46,17 +45,8 @@ export async function POST(request: Request) {
       spotify_track_id: dedication.spotifyTrackId ?? null,
       spotify_url: dedication.spotifyUrl ?? null,
     });
-
-    if (error) {
-      console.error("Unable to save dedication.", error);
-
-      return NextResponse.json(
-        { error: "No pudimos guardar tu historia. Inténtalo de nuevo." },
-        { status: 500 },
-      );
-    }
   } catch (error) {
-    console.error("Unable to initialize Supabase.", error);
+    console.error("Unable to save dedication.", error);
 
     return NextResponse.json(
       { error: "No pudimos guardar tu historia. Inténtalo de nuevo." },

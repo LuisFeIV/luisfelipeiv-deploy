@@ -5,8 +5,8 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 
 import styles from "./page.module.css";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { PrivateDedicationStyle } from "@/lib/supabase/database.types";
+import { findPrivateDedication } from "@/lib/db/dedications";
+import type { PrivateDedicationStyle } from "@/lib/db/schema";
 
 type PrivateDedicationPageProps = {
   params: Promise<{
@@ -41,17 +41,6 @@ function getExplicitStoryStyleFromSlug(slug: string) {
   return isPrivateDedicationStyle(style) ? style : null;
 }
 
-function getStoryStyleFromSlug(slug: string): PrivateDedicationStyle {
-  return getExplicitStoryStyleFromSlug(slug) ?? "editorial";
-}
-
-function isMissingStoryStyleColumn(error: { code?: string; message: string }) {
-  return (
-    (error.code === "42703" || error.code === "PGRST204") &&
-    error.message.includes("story_style")
-  );
-}
-
 const getPrivateDedication = cache(async (slug: string) => {
   const token = getShareToken(slug);
 
@@ -60,51 +49,19 @@ const getPrivateDedication = cache(async (slug: string) => {
   }
 
   try {
-    const supabase = createSupabaseServerClient();
-    const { data, error } = await supabase
-      .from("private_dedications")
-      .select(
-        "sender_name, recipient_name, song, artist, message, spotify_track_id, spotify_url, story_style",
-      )
-      .eq("share_token_hash", hashShareToken(token))
-      .maybeSingle();
+    const dedication = await findPrivateDedication(hashShareToken(token));
 
-    if (error && isMissingStoryStyleColumn(error)) {
-      const legacyResult = await supabase
-        .from("private_dedications")
-        .select(
-          "sender_name, recipient_name, song, artist, message, spotify_track_id, spotify_url",
-        )
-        .eq("share_token_hash", hashShareToken(token))
-        .maybeSingle();
-
-      if (legacyResult.error || !legacyResult.data) {
-        if (legacyResult.error) {
-          console.error("Unable to load private dedication.", legacyResult.error);
-        }
-        return null;
-      }
-
-      return {
-        ...legacyResult.data,
-        story_style: getStoryStyleFromSlug(slug),
-      };
-    }
-
-    if (error) {
-      console.error("Unable to load private dedication.", error);
-
+    if (!dedication) {
       return null;
     }
 
-    return data
-      ? {
-          ...data,
-          story_style: getExplicitStoryStyleFromSlug(slug) ?? data.story_style,
-        }
-      : null;
+    return {
+      ...dedication,
+      story_style:
+        getExplicitStoryStyleFromSlug(slug) ?? dedication.story_style,
+    };
   } catch (error) {
-    console.error("Unable to initialize Supabase.", error);
+    console.error("Unable to load private dedication.", error);
 
     return null;
   }

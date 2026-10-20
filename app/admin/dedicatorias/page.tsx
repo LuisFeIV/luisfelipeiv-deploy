@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 
 import styles from "../admin.module.css";
 import { adminSessionCookieName, hasValidAdminSession } from "@/lib/admin-auth";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import type { DedicationStatus } from "@/lib/supabase/database.types";
+import { listDedications } from "@/lib/db/dedications";
+import type { DedicationStatus } from "@/lib/db/schema";
 import { AdminFrame } from "../_components/admin-frame";
 
 const statusFilterValues = [
@@ -93,34 +93,14 @@ async function getDedications(
   permissionFilter: PermissionFilter,
 ) {
   try {
-    const supabase = createSupabaseServerClient();
-    let query = supabase
-      .from("dedications")
-      .select(
-        "id, sender_name, recipient_name, song, artist, message, instagram, allow_publishing, status, created_at",
-      );
-
-    if (statusFilter !== "all") {
-      query = query.eq("status", statusFilter);
-    }
-
-    if (permissionFilter === "authorized") {
-      query = query.eq("allow_publishing", true);
-    }
-
-    const { data, error } = await query
-      .order("created_at", { ascending: false })
-      .limit(100);
-
-    if (error) {
-      console.error("Unable to load dedications.", error);
-
-      return { dedications: [], hasError: true };
-    }
+    const data = await listDedications({
+      authorizedOnly: permissionFilter === "authorized",
+      status: statusFilter === "all" ? null : statusFilter,
+    });
 
     return { dedications: data, hasError: false };
   } catch (error) {
-    console.error("Unable to initialize Supabase.", error);
+    console.error("Unable to load dedications.", error);
 
     return { dedications: [], hasError: true };
   }
@@ -222,7 +202,7 @@ export default async function AdminDedicationsPage({
       {hasError ? (
         <section className={styles.errorState} role="alert">
           <h2>No pudimos cargar las dedicatorias.</h2>
-          <p>Actualiza la página. Si continúa, revisa la conexión con Supabase.</p>
+          <p>Actualiza la página. Si continúa, revisa la conexión con la base de datos.</p>
         </section>
       ) : null}
 

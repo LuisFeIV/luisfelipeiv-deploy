@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { adminSessionCookieName, hasValidAdminSession } from "@/lib/admin-auth";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { updateDedicationStatus } from "@/lib/db/dedications";
 import { adminDedicationStatusUpdateSchema } from "@/lib/validations/dedication";
 
 const statusFilterValues = [
@@ -96,16 +96,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    const supabase = createSupabaseServerClient();
-    const { data, error } = await supabase
-      .from("dedications")
-      .update({ status: parsed.data.status })
-      .eq("id", parsed.data.id)
-      .select("id")
-      .maybeSingle();
+    const updated = await updateDedicationStatus(
+      parsed.data.id,
+      parsed.data.status,
+    );
 
-    if (error || !data) {
-      console.error("Unable to update dedication status.", error);
+    if (!updated) {
+      console.error("Unable to update dedication status: record not found.");
 
       return NextResponse.redirect(
         getAdminUrl(request, statusFilter, permissionFilter, {
@@ -115,7 +112,7 @@ export async function POST(request: Request) {
       );
     }
   } catch (error) {
-    console.error("Unable to initialize Supabase.", error);
+    console.error("Unable to update dedication status.", error);
 
     return NextResponse.redirect(
       getAdminUrl(request, statusFilter, permissionFilter, {

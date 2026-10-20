@@ -2,7 +2,7 @@ import { createHash, randomBytes } from "node:crypto";
 
 import { NextResponse } from "next/server";
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createPrivateDedication } from "@/lib/db/dedications";
 import { privateDedicationSubmissionSchema } from "@/lib/validations/dedication";
 
 const PRODUCTION_PUBLIC_ORIGIN = "https://www.luisfelipeiv.com";
@@ -28,18 +28,17 @@ function createFriendlySlug(recipientName: string) {
 }
 
 function getPublicOrigin(request: Request) {
+  const configuredOrigin = process.env.PUBLIC_SITE_URL?.trim();
+
+  if (configuredOrigin) {
+    return new URL(configuredOrigin).origin;
+  }
+
   if (process.env.NODE_ENV === "production") {
     return PRODUCTION_PUBLIC_ORIGIN;
   }
 
   return new URL(request.url).origin;
-}
-
-function isMissingStoryStyleColumn(error: { code?: string; message: string }) {
-  return (
-    (error.code === "42703" || error.code === "PGRST204") &&
-    error.message.includes("story_style")
-  );
 }
 
 export async function POST(request: Request) {
@@ -77,8 +76,7 @@ export async function POST(request: Request) {
   const shareUrl = new URL(sharePath, getPublicOrigin(request)).toString();
 
   try {
-    const supabase = createSupabaseServerClient();
-    const insertData = {
+    await createPrivateDedication({
       artist: dedication.artist,
       message: dedication.message,
       recipient_name: dedication.recipientName,
@@ -87,27 +85,10 @@ export async function POST(request: Request) {
       song: dedication.song,
       spotify_track_id: dedication.spotifyTrackId ?? null,
       spotify_url: dedication.spotifyUrl ?? null,
-    };
-    let { error } = await supabase.from("private_dedications").insert({
-      ...insertData,
       story_style: dedication.storyStyle,
     });
-
-    if (error && isMissingStoryStyleColumn(error)) {
-      const legacyInsert = await supabase.from("private_dedications").insert(insertData);
-      error = legacyInsert.error;
-    }
-
-    if (error) {
-      console.error("Unable to save private dedication.", error);
-
-      return NextResponse.json(
-        { error: "No pudimos crear tu dedicatoria. Inténtalo de nuevo." },
-        { status: 500 },
-      );
-    }
   } catch (error) {
-    console.error("Unable to initialize Supabase.", error);
+    console.error("Unable to save private dedication.", error);
 
     return NextResponse.json(
       { error: "No pudimos crear tu dedicatoria. Inténtalo de nuevo." },

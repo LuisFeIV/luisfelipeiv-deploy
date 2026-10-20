@@ -1,0 +1,309 @@
+{
+  "id": "2629d1b8-bf4f-4f73-be91-86d748dfc8bd",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.dedications": {
+      "name": "dedications",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "sender_name": {
+          "name": "sender_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recipient_name": {
+          "name": "recipient_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "song": {
+          "name": "song",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "artist": {
+          "name": "artist",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "instagram": {
+          "name": "instagram",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "allow_publishing": {
+          "name": "allow_publishing",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "status": {
+          "name": "status",
+          "type": "dedication_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "spotify_track_id": {
+          "name": "spotify_track_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "spotify_url": {
+          "name": "spotify_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "dedications_status_created_at_idx": {
+          "name": "dedications_status_created_at_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "\"created_at\" desc",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "dedications_sender_name_length": {
+          "name": "dedications_sender_name_length",
+          "value": "\"dedications\".\"sender_name\" is null or char_length(\"dedications\".\"sender_name\") <= 80"
+        },
+        "dedications_recipient_name_length": {
+          "name": "dedications_recipient_name_length",
+          "value": "\"dedications\".\"recipient_name\" is null or char_length(\"dedications\".\"recipient_name\") <= 80"
+        },
+        "dedications_song_not_blank": {
+          "name": "dedications_song_not_blank",
+          "value": "char_length(\"dedications\".\"song\") between 1 and 160 and btrim(\"dedications\".\"song\") <> ''"
+        },
+        "dedications_artist_not_blank": {
+          "name": "dedications_artist_not_blank",
+          "value": "char_length(\"dedications\".\"artist\") between 1 and 160 and btrim(\"dedications\".\"artist\") <> ''"
+        },
+        "dedications_message_not_blank": {
+          "name": "dedications_message_not_blank",
+          "value": "char_length(\"dedications\".\"message\") between 1 and 4000 and btrim(\"dedications\".\"message\") <> ''"
+        },
+        "dedications_instagram_length": {
+          "name": "dedications_instagram_length",
+          "value": "\"dedications\".\"instagram\" is null or char_length(\"dedications\".\"instagram\") <= 31"
+        },
+        "dedications_spotify_track_id_length": {
+          "name": "dedications_spotify_track_id_length",
+          "value": "\"dedications\".\"spotify_track_id\" is null or char_length(\"dedications\".\"spotify_track_id\") between 1 and 64"
+        },
+        "dedications_spotify_url_length": {
+          "name": "dedications_spotify_url_length",
+          "value": "\"dedications\".\"spotify_url\" is null or char_length(\"dedications\".\"spotify_url\") <= 500"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.private_dedications": {
+      "name": "private_dedications",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "sender_name": {
+          "name": "sender_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recipient_name": {
+          "name": "recipient_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "song": {
+          "name": "song",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "artist": {
+          "name": "artist",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "message": {
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "share_token_hash": {
+          "name": "share_token_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "spotify_track_id": {
+          "name": "spotify_track_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "spotify_url": {
+          "name": "spotify_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "story_style": {
+          "name": "story_style",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'editorial'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "private_dedications_share_token_hash_unique": {
+          "name": "private_dedications_share_token_hash_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "share_token_hash"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {
+        "private_dedications_sender_name_length": {
+          "name": "private_dedications_sender_name_length",
+          "value": "\"private_dedications\".\"sender_name\" is null or char_length(\"private_dedications\".\"sender_name\") <= 80"
+        },
+        "private_dedications_recipient_name_length": {
+          "name": "private_dedications_recipient_name_length",
+          "value": "char_length(\"private_dedications\".\"recipient_name\") between 1 and 80 and btrim(\"private_dedications\".\"recipient_name\") <> ''"
+        },
+        "private_dedications_song_not_blank": {
+          "name": "private_dedications_song_not_blank",
+          "value": "char_length(\"private_dedications\".\"song\") between 1 and 160 and btrim(\"private_dedications\".\"song\") <> ''"
+        },
+        "private_dedications_artist_not_blank": {
+          "name": "private_dedications_artist_not_blank",
+          "value": "char_length(\"private_dedications\".\"artist\") between 1 and 160 and btrim(\"private_dedications\".\"artist\") <> ''"
+        },
+        "private_dedications_message_not_blank": {
+          "name": "private_dedications_message_not_blank",
+          "value": "char_length(\"private_dedications\".\"message\") between 1 and 4000 and btrim(\"private_dedications\".\"message\") <> ''"
+        },
+        "private_dedications_share_token_hash_length": {
+          "name": "private_dedications_share_token_hash_length",
+          "value": "char_length(\"private_dedications\".\"share_token_hash\") = 64"
+        },
+        "private_dedications_spotify_track_id_length": {
+          "name": "private_dedications_spotify_track_id_length",
+          "value": "\"private_dedications\".\"spotify_track_id\" is null or char_length(\"private_dedications\".\"spotify_track_id\") between 1 and 64"
+        },
+        "private_dedications_spotify_url_length": {
+          "name": "private_dedications_spotify_url_length",
+          "value": "\"private_dedications\".\"spotify_url\" is null or char_length(\"private_dedications\".\"spotify_url\") <= 500"
+        },
+        "private_dedications_story_style_valid": {
+          "name": "private_dedications_story_style_valid",
+          "value": "\"private_dedications\".\"story_style\" in ('editorial', 'noche', 'tinta')"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.dedication_status": {
+      "name": "dedication_status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "approved",
+        "rejected",
+        "published"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
