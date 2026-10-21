@@ -1023,7 +1023,8 @@ let carouselIdx = 0;
 const slides = document.getElementById('aboutSlides');
 const cDots  = document.querySelectorAll('.carousel-dots .cd');
 function carouselGo(n) {
-  carouselIdx = (n + 3) % 3;
+  if (!cDots.length) return;
+  carouselIdx = (n + cDots.length) % cDots.length;
   if(slides) slides.style.transform = `translateX(-${carouselIdx * 100}%)`;
   cDots.forEach((d,i) => d.classList.toggle('active', i === carouselIdx));
 }
