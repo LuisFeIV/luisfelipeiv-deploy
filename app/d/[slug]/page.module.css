@@ -7,6 +7,9 @@
   --dedication-muted: var(--ink3);
   --dedication-highlight: var(--red);
   --dedication-border: var(--w3);
+  --dedication-page-text: var(--ink);
+  --dedication-page-muted: var(--ink3);
+  --dedication-page-accent: var(--red);
   align-items: center;
   background: var(--dedication-page);
   color: var(--dedication-foreground);
@@ -27,6 +30,9 @@
   --dedication-muted: var(--w3);
   --dedication-highlight: var(--red);
   --dedication-border: var(--bbd);
+  --dedication-page-text: var(--w);
+  --dedication-page-muted: var(--w3);
+  --dedication-page-accent: var(--red);
 }
 
 .page[data-story-style="tinta"] {
@@ -38,6 +44,9 @@
   --dedication-muted: var(--w3);
   --dedication-highlight: var(--w);
   --dedication-border: color-mix(in srgb, var(--w) 28%, transparent);
+  --dedication-page-text: var(--ink);
+  --dedication-page-muted: var(--ink3);
+  --dedication-page-accent: var(--red2);
 }
 
 .card {
@@ -417,6 +426,58 @@
     opacity: 0;
     transform: scale(0.96);
   }
+}
+
+.invite {
+  align-items: center;
+  color: var(--dedication-page-text);
+  display: flex;
+  flex-direction: column;
+  max-width: 620px;
+  padding: 28px 16px 12px;
+  text-align: center;
+  width: 100%;
+}
+
+.inviteTitle {
+  font-family: var(--fd);
+  font-size: clamp(22px, 4vw, 28px);
+  font-style: italic;
+  line-height: 1.15;
+}
+
+.inviteText {
+  color: var(--dedication-page-muted);
+  font-size: 15px;
+  margin-top: 6px;
+}
+
+.inviteButton {
+  align-items: center;
+  background: var(--dedication-page-accent);
+  border-radius: 999px;
+  color: var(--w);
+  display: inline-flex;
+  font-family: var(--fd);
+  font-size: 15px;
+  font-weight: 700;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 18px;
+  min-height: 48px;
+  padding: 0 26px;
+  touch-action: manipulation;
+  transition: transform 180ms var(--ease), background 180ms var(--ease);
+}
+
+.inviteButton:hover {
+  background: var(--red2);
+  transform: translateY(-1px);
+}
+
+.inviteButton:focus-visible {
+  outline: 2px solid var(--dedication-page-accent);
+  outline-offset: 3px;
 }
 
 .spinner {

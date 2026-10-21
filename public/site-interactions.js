@@ -942,6 +942,19 @@ function switchTab(tab) {
 submitPrivateDedicationForm();
 initializePrivateDedicationStoryDesigner();
 
+function openDedicationFromHash() {
+  if (window.location.hash !== '#dedicar') return;
+  const buzon = document.getElementById('buzon');
+  if (!buzon) return;
+
+  switchTab('dedicar');
+  buzon.querySelectorAll('.reveal').forEach(element => element.classList.add('on'));
+  requestAnimationFrame(() => buzon.scrollIntoView({ block: 'start' }));
+}
+
+openDedicationFromHash();
+window.addEventListener('hashchange', openDedicationFromHash);
+
 Object.assign(window, {
   menuOpen,
   menuClose,

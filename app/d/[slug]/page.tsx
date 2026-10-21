@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 
+import Link from "next/link";
+
 import { DedicationStoryActions } from "./dedication-story-actions";
 import styles from "./page.module.css";
 import { findPrivateDedication } from "@/lib/db/dedications";
@@ -132,6 +134,19 @@ export default async function PrivateDedicationPage({
         song={dedication.song}
         storyStyle={dedication.story_style}
       />
+      <aside aria-labelledby="dedication-invite-title" className={styles.invite}>
+        <p className={styles.inviteTitle} id="dedication-invite-title">
+          ¿Alguien te vino a la mente?
+        </p>
+        <p className={styles.inviteText}>Dedícale una canción tú también.</p>
+        <Link className={styles.inviteButton} href="/#dedicar">
+          Dedicar una canción
+          <svg aria-hidden="true" fill="none" height="14" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" viewBox="0 0 24 24" width="14">
+            <line x1="5" x2="19" y1="12" y2="12" />
+            <polyline points="13 6 19 12 13 18" />
+          </svg>
+        </Link>
+      </aside>
     </main>
   );
 }
