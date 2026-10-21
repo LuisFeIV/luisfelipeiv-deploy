@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 
+import { DedicationStoryActions } from "./dedication-story-actions";
 import styles from "./page.module.css";
 import { findPrivateDedication } from "@/lib/db/dedications";
 import { parsePrivateDedicationSlug } from "@/lib/private-dedication-slug";
@@ -123,6 +124,14 @@ export default async function PrivateDedicationPage({
           </p>
         </div>
       </article>
+      <DedicationStoryActions
+        artist={dedication.artist}
+        message={dedication.message}
+        recipientName={dedication.recipient_name}
+        senderName={dedication.sender_name ?? ""}
+        song={dedication.song}
+        storyStyle={dedication.story_style}
+      />
     </main>
   );
 }

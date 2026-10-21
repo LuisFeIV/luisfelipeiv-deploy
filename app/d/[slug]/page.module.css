@@ -11,6 +11,8 @@
   background: var(--dedication-page);
   color: var(--dedication-foreground);
   display: flex;
+  flex-direction: column;
+  gap: 16px;
   justify-content: center;
   min-height: 100dvh;
   padding: 24px;
@@ -161,9 +163,319 @@
   text-transform: uppercase;
 }
 
+.storyPanel {
+  align-items: center;
+  background: var(--dedication-card);
+  border: 1px solid var(--dedication-border);
+  border-radius: 18px;
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--ink) 10%, transparent);
+  display: grid;
+  gap: 6px 18px;
+  grid-template-areas:
+    "thumb copy"
+    "thumb actions"
+    "thumb status";
+  grid-template-columns: 76px minmax(0, 1fr);
+  max-width: 620px;
+  padding: 16px 18px;
+  width: 100%;
+}
+
+.storyThumb {
+  aspect-ratio: 9 / 16;
+  background: color-mix(in srgb, var(--dedication-foreground) 8%, transparent);
+  border: 1px solid var(--dedication-border);
+  border-radius: 10px;
+  cursor: zoom-in;
+  grid-area: thumb;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  transition: transform 200ms var(--ease), box-shadow 200ms var(--ease);
+  width: 76px;
+}
+
+.storyThumb:disabled {
+  cursor: progress;
+}
+
+.storyThumb:not(:disabled):hover {
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--ink) 22%, transparent);
+  transform: translateY(-2px) rotate(-1.5deg);
+}
+
+.storyThumb:focus-visible {
+  outline: 2px solid var(--dedication-highlight);
+  outline-offset: 3px;
+}
+
+.storyThumb img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.storyThumbPlaceholder {
+  align-items: center;
+  color: var(--dedication-muted);
+  display: flex;
+  font-family: var(--fm);
+  font-size: 9px;
+  height: 100%;
+  justify-content: center;
+  padding: 6px;
+  text-align: center;
+}
+
+.storyThumbZoom {
+  align-items: center;
+  background: color-mix(in srgb, var(--ink) 72%, transparent);
+  border-radius: 50%;
+  bottom: 6px;
+  color: var(--w);
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  position: absolute;
+  right: 6px;
+  width: 24px;
+}
+
+.storyCopy {
+  align-self: end;
+  grid-area: copy;
+  min-width: 0;
+}
+
+.storyKicker {
+  color: var(--dedication-highlight);
+  font-family: var(--fm);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.storyTitle {
+  font-family: var(--fd);
+  font-size: 19px;
+  line-height: 1.15;
+  margin-top: 4px;
+}
+
+.storyText {
+  color: var(--dedication-muted);
+  font-size: 13px;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.storyActions {
+  align-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  grid-area: actions;
+  margin-top: 6px;
+}
+
+.storyPrimary,
+.storySecondary {
+  align-items: center;
+  border: 1px solid var(--dedication-foreground);
+  border-radius: 999px;
+  display: inline-flex;
+  font-family: var(--fm);
+  font-size: 10px;
+  font-weight: 500;
+  gap: 7px;
+  justify-content: center;
+  letter-spacing: 0.06em;
+  min-height: 44px;
+  padding: 0 18px;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transition: opacity 180ms var(--ease), background 180ms var(--ease);
+}
+
+.storyPrimary {
+  background: var(--dedication-foreground);
+  color: var(--dedication-card);
+}
+
+.storySecondary {
+  background: transparent;
+  color: var(--dedication-foreground);
+}
+
+.storySecondary:hover {
+  background: color-mix(in srgb, var(--dedication-foreground) 10%, transparent);
+}
+
+.storyPrimary:hover {
+  opacity: 0.86;
+}
+
+.storyPrimary:focus-visible,
+.storySecondary:focus-visible,
+.storyDialogClose:focus-visible {
+  outline: 2px solid var(--dedication-highlight);
+  outline-offset: 3px;
+}
+
+.storyPrimary:disabled,
+.storySecondary:disabled {
+  cursor: progress;
+  opacity: 0.5;
+}
+
+.storyStatus {
+  color: var(--dedication-secondary);
+  font-size: 12px;
+  grid-area: status;
+  line-height: 1.45;
+}
+
+.storyStatus[data-tone="error"] {
+  color: var(--dedication-highlight);
+}
+
+.storyDialog {
+  background: transparent;
+  border: 0;
+  margin: auto;
+  max-height: none;
+  max-width: none;
+  overflow: visible;
+  padding: 16px;
+}
+
+.storyDialog::backdrop {
+  backdrop-filter: blur(4px);
+  background: color-mix(in srgb, var(--ink) 78%, transparent);
+}
+
+.storyDialog[open] {
+  animation: storyDialogIn 220ms var(--ease);
+}
+
+.storyDialogInner {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+}
+
+.storyDialogImage {
+  border-radius: 14px;
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--ink) 45%, transparent);
+  display: block;
+  height: auto;
+  max-height: calc(100dvh - 150px);
+  max-width: calc(100vw - 32px);
+  width: auto;
+}
+
+.storyDialog .storyActions {
+  align-self: center;
+  justify-content: center;
+  margin-top: 0;
+}
+
+.storyDialog .storyPrimary {
+  background: var(--w);
+  border-color: var(--w);
+  color: var(--ink);
+}
+
+.storyDialog .storySecondary {
+  border-color: var(--w);
+  color: var(--w);
+}
+
+.storyDialogClose {
+  align-items: center;
+  background: var(--w);
+  border-radius: 50%;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--ink) 30%, transparent);
+  color: var(--ink);
+  display: flex;
+  font-size: 24px;
+  height: 44px;
+  justify-content: center;
+  line-height: 1;
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  width: 44px;
+  z-index: 1;
+}
+
+@keyframes storyDialogIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.spinner {
+  animation: storySpin 700ms linear infinite;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-right-color: transparent;
+  display: inline-block;
+  height: 13px;
+  width: 13px;
+}
+
+@keyframes storySpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2s;
+  }
+
+  .storyDialog[open] {
+    animation: none;
+  }
+
+  .storyThumb:not(:disabled):hover {
+    transform: none;
+  }
+}
+
 @media (max-width: 480px) {
   .page {
     padding: 14px;
+  }
+
+  .storyPanel {
+    gap: 4px 14px;
+    grid-template-areas:
+      "thumb copy"
+      "actions actions"
+      "status status";
+    grid-template-columns: 64px minmax(0, 1fr);
+    padding: 14px;
+  }
+
+  .storyThumb {
+    width: 64px;
+  }
+
+  .storyCopy {
+    align-self: center;
+  }
+
+  .storyPanel > .storyActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 10px;
   }
 
   .top {

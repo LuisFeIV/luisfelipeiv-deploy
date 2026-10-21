@@ -18,6 +18,7 @@ export default async function HomePage() {
     <>
       <StaticSite markup={markup} />
       <Script src="https://f.convertkit.com/ckjs/ck.5.js" strategy="afterInteractive" />
+      <Script src="/dedication-story.js" strategy="afterInteractive" />
       <Script src="/site-interactions.js" strategy="afterInteractive" />
     </>
   );
