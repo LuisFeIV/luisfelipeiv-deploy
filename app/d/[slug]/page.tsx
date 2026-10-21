@@ -6,7 +6,7 @@ import { cache } from "react";
 
 import styles from "./page.module.css";
 import { findPrivateDedication } from "@/lib/db/dedications";
-import type { PrivateDedicationStyle } from "@/lib/db/schema";
+import { parsePrivateDedicationSlug } from "@/lib/private-dedication-slug";
 
 type PrivateDedicationPageProps = {
   params: Promise<{
@@ -14,42 +14,21 @@ type PrivateDedicationPageProps = {
   }>;
 };
 
-function getShareToken(slug: string) {
-  const separatorIndex = slug.lastIndexOf("--");
-
-  if (separatorIndex === -1) {
-    return null;
-  }
-
-  const token = slug.slice(separatorIndex + 2);
-
-  return /^[A-Za-z0-9_-]{16}$/.test(token) ? token : null;
-}
-
 function hashShareToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
 
-function isPrivateDedicationStyle(value: string): value is PrivateDedicationStyle {
-  return ["editorial", "noche", "tinta"].includes(value);
-}
-
-function getExplicitStoryStyleFromSlug(slug: string) {
-  const segments = slug.split("--");
-  const style = segments.at(-2) ?? "";
-
-  return isPrivateDedicationStyle(style) ? style : null;
-}
-
 const getPrivateDedication = cache(async (slug: string) => {
-  const token = getShareToken(slug);
+  const parsedSlug = parsePrivateDedicationSlug(slug);
 
-  if (!token) {
+  if (!parsedSlug) {
     return null;
   }
 
   try {
-    const dedication = await findPrivateDedication(hashShareToken(token));
+    const dedication = await findPrivateDedication(
+      hashShareToken(parsedSlug.shareToken),
+    );
 
     if (!dedication) {
       return null;
@@ -57,8 +36,7 @@ const getPrivateDedication = cache(async (slug: string) => {
 
     return {
       ...dedication,
-      story_style:
-        getExplicitStoryStyleFromSlug(slug) ?? dedication.story_style,
+      story_style: parsedSlug.storyStyle ?? dedication.story_style,
     };
   } catch (error) {
     console.error("Unable to load private dedication.", error);
