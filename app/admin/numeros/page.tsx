@@ -1,9 +1,12 @@
-import { AdminFrame, DemoNotice } from "../_components/admin-frame";
+import { AdminFrame } from "../_components/admin-frame";
 import { PublicNumberManager } from "../_components/public-number-manager";
 import styles from "../admin.module.css";
-import { mockPublicNumbers } from "@/lib/admin/mock-data";
+import { listAdminPublicNumbers } from "@/lib/db/site-content";
 
-export default function AdminNumbersPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminNumbersPage() {
+  const numbers = await listAdminPublicNumbers();
   return (
     <AdminFrame activeSection="numbers">
       <header className={styles.pageHeader}>
@@ -13,8 +16,7 @@ export default function AdminNumbersPage() {
           <p className={styles.copy}>Edita únicamente las cifras que se muestran en la página pública.</p>
         </div>
       </header>
-      <DemoNotice />
-      <PublicNumberManager initialNumbers={mockPublicNumbers} />
+      <PublicNumberManager initialNumbers={numbers} />
     </AdminFrame>
   );
 }

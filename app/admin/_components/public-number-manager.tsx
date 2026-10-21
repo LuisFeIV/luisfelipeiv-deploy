@@ -13,7 +13,8 @@ import {
 } from "@/lib/admin/validation";
 
 import styles from "../admin.module.css";
-import { AdminTextField, MoveIcon, VisibilityField } from "./form-controls";
+import { AdminFeedbackRegion, AdminTextField, MoveIcon, Spinner, VisibilityField } from "./form-controls";
+import { useSiteContentMutations } from "./use-site-content-mutations";
 
 type PublicNumberManagerProps = {
   initialNumbers: PublicNumberViewModel[];
@@ -39,7 +40,7 @@ export function PublicNumberManager({ initialNumbers }: PublicNumberManagerProps
     firstNumber ? { ...firstNumber } : emptyNumber,
   );
   const [errors, setErrors] = useState<PublicNumberDraftErrors>({});
-  const [announcement, setAnnouncement] = useState("");
+  const { announcement, dismissFeedback, feedback, notify, pendingAction, reorder, save, saving, setAnnouncement } = useSiteContentMutations("numbers");
   const sortedNumbers = useMemo(() => sortNumbers(numbers), [numbers]);
   const isCreating = selectedId === null;
 
@@ -65,69 +66,55 @@ export function PublicNumberManager({ initialNumbers }: PublicNumberManagerProps
     setAnnouncement("Formulario para un nuevo número público.");
   }
 
-  function moveNumber(id: string, direction: -1 | 1) {
-    setNumbers((current) => {
-      const ordered = sortNumbers(current);
-      const currentIndex = ordered.findIndex((item) => item.id === id);
-      const targetIndex = currentIndex + direction;
-
-      if (currentIndex < 0 || targetIndex < 0 || targetIndex >= ordered.length) {
-        return current;
-      }
-
-      const reordered = [...ordered];
-      [reordered[currentIndex], reordered[targetIndex]] = [
-        reordered[targetIndex],
-        reordered[currentIndex],
-      ];
-
-      return reordered.map((item, index) => ({ ...item, order: index + 1 }));
-    });
-    setAnnouncement("Orden actualizado sólo en esta demostración.");
+  async function moveNumber(id: string, direction: -1 | 1) {
+    const ordered = sortNumbers(numbers);
+    const currentIndex = ordered.findIndex((item) => item.id === id);
+    const targetIndex = currentIndex + direction;
+    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= ordered.length) return;
+    [ordered[currentIndex], ordered[targetIndex]] = [ordered[targetIndex], ordered[currentIndex]];
+    const nextNumbers = ordered.map((item, index) => ({ ...item, order: index + 1 }));
+    if (await reorder(nextNumbers)) setNumbers(nextNumbers);
   }
 
-  function toggleVisibility(item: PublicNumberViewModel) {
+  async function toggleVisibility(item: PublicNumberViewModel) {
     const visible = !item.visible;
-    setNumbers((current) =>
-      current.map((number) => number.id === item.id ? { ...number, visible } : number),
-    );
-    if (selectedId === item.id) {
-      setDraft((current) => ({ ...current, visible }));
-    }
-    setAnnouncement(`${item.platform} ahora está ${visible ? "visible" : "oculto"} en esta demostración.`);
+    const { id: _id, order: _order, ...values } = item;
+    const result = await save(item.id, { ...values, visible }, {
+      action: `visibility:${item.id}`,
+      successMessage: visible ? `«${item.platform}» ahora es visible en el sitio.` : `«${item.platform}» quedó oculto del sitio.`,
+    });
+    if (!result.success) return;
+    setNumbers((current) => current.map((number) => number.id === item.id ? { ...number, visible } : number));
+    if (selectedId === item.id) setDraft((current) => ({ ...current, visible }));
   }
 
-  function submitDraft(event: FormEvent<HTMLFormElement>) {
+  async function submitDraft(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const nextErrors = validatePublicNumberDraft(draft);
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
-      setAnnouncement("Revisa los campos marcados antes de continuar.");
+      notify("error", "Revisa los campos marcados antes de continuar.");
       requestAnimationFrame(() => {
         form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
       });
       return;
     }
 
+    const values = { platform: draft.platform, value: draft.value, suffix: draft.suffix, description: draft.description, visible: draft.visible };
+    const result = await save(selectedId, values, {
+      successMessage: selectedId ? "Número guardado. Ya se ve en el sitio." : "Número agregado al final de la sección.",
+    });
+    if (!result.success) return;
     if (selectedId) {
-      setNumbers((current) =>
-        current.map((item) => item.id === selectedId ? { ...item, ...draft } : item),
-      );
-      setAnnouncement("Cambios aplicados sólo en esta demostración.");
+      setNumbers((current) => current.map((item) => item.id === selectedId ? { ...item, ...values } : item));
       return;
     }
-
-    const id = `number-demo-${numbers.length + 1}`;
-    const item: PublicNumberViewModel = {
-      ...draft,
-      id,
-      order: numbers.length + 1,
-    };
-    setNumbers((current) => [...current, item]);
+    if (!result.id) return;
+    const id = result.id;
+    setNumbers((current) => [...current, { ...values, id, order: Math.max(0, ...current.map((item) => item.order)) + 1 }]);
     setSelectedId(id);
-    setAnnouncement("Número creado sólo en esta demostración.");
   }
 
   return (
@@ -138,7 +125,7 @@ export function PublicNumberManager({ initialNumbers }: PublicNumberManagerProps
             <p className={styles.sectionLabel}>Orden del sitio</p>
             <h2 id="numbers-list-title">Números públicos</h2>
           </div>
-          <button className={styles.secondaryButton} onClick={startCreating} type="button">
+          <button className={styles.secondaryButton} disabled={saving} onClick={startCreating} type="button">
             Nuevo número
           </button>
         </div>
@@ -161,7 +148,7 @@ export function PublicNumberManager({ initialNumbers }: PublicNumberManagerProps
               <div aria-label={`Acciones para ${item.platform}`} className={styles.rowActions}>
                 <button
                   aria-label={`Subir ${item.platform}`}
-                  disabled={index === 0}
+                  disabled={index === 0 || saving}
                   onClick={() => moveNumber(item.id, -1)}
                   type="button"
                 >
@@ -169,13 +156,14 @@ export function PublicNumberManager({ initialNumbers }: PublicNumberManagerProps
                 </button>
                 <button
                   aria-label={`Bajar ${item.platform}`}
-                  disabled={index === sortedNumbers.length - 1}
+                  disabled={index === sortedNumbers.length - 1 || saving}
                   onClick={() => moveNumber(item.id, 1)}
                   type="button"
                 >
                   <MoveIcon direction="down" />
                 </button>
-                <button onClick={() => toggleVisibility(item)} type="button">
+                <button aria-busy={pendingAction === `visibility:${item.id}`} disabled={saving} onClick={() => toggleVisibility(item)} type="button">
+                  {pendingAction === `visibility:${item.id}` ? <Spinner /> : null}
                   {item.visible ? "Ocultar" : "Mostrar"}
                 </button>
               </div>
@@ -187,7 +175,7 @@ export function PublicNumberManager({ initialNumbers }: PublicNumberManagerProps
       <section aria-labelledby="number-editor-title" className={styles.editorPanel}>
         <div className={styles.panelHeading}>
           <div>
-            <p className={styles.sectionLabel}>{isCreating ? "Nuevo elemento" : "Edición local"}</p>
+            <p className={styles.sectionLabel}>{isCreating ? "Nuevo elemento" : "Edición guardada"}</p>
             <h2 id="number-editor-title">{isCreating ? "Crear número" : "Editar número"}</h2>
           </div>
         </div>
@@ -234,8 +222,8 @@ export function PublicNumberManager({ initialNumbers }: PublicNumberManagerProps
             onChange={(checked) => updateDraft("visible", checked)}
           />
           <div className={styles.formActions}>
-            <button className={styles.primaryButton} type="submit">
-              Aplicar en demo
+            <button aria-busy={pendingAction === "save"} className={styles.primaryButton} disabled={saving} type="submit">
+              {pendingAction === "save" ? <><Spinner />Guardando…</> : "Guardar número"}
             </button>
             <button
               className={styles.textButton}
@@ -262,7 +250,7 @@ export function PublicNumberManager({ initialNumbers }: PublicNumberManagerProps
           </article>
         </div>
       </section>
-      <p aria-live="polite" className={styles.srOnly}>{announcement}</p>
+      <AdminFeedbackRegion announcement={announcement} feedback={feedback} onDismiss={dismissFeedback} />
     </div>
   );
 }

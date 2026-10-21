@@ -10,7 +10,8 @@ import {
 } from "@/lib/admin/validation";
 
 import styles from "../admin.module.css";
-import { AdminTextAreaField, AdminTextField, MoveIcon, VisibilityField } from "./form-controls";
+import { AdminFeedbackRegion, AdminTextAreaField, AdminTextField, MoveIcon, Spinner, VisibilityField } from "./form-controls";
+import { useSiteContentMutations } from "./use-site-content-mutations";
 
 type CommunityStoryManagerProps = {
   initialStories: CommunityStoryViewModel[];
@@ -34,7 +35,7 @@ export function CommunityStoryManager({ initialStories }: CommunityStoryManagerP
   const [selectedId, setSelectedId] = useState<string | null>(firstStory?.id ?? null);
   const [draft, setDraft] = useState<CommunityStoryDraft>(firstStory ? { ...firstStory } : emptyStory);
   const [errors, setErrors] = useState<CommunityStoryDraftErrors>({});
-  const [announcement, setAnnouncement] = useState("");
+  const { announcement, dismissFeedback, feedback, notify, pendingAction, reorder, save, saving, setAnnouncement } = useSiteContentMutations("stories");
   const sortedStories = useMemo(() => sortStories(stories), [stories]);
   const isCreating = selectedId === null;
 
@@ -57,49 +58,53 @@ export function CommunityStoryManager({ initialStories }: CommunityStoryManagerP
     setAnnouncement("Formulario para una nueva historia de la comunidad.");
   }
 
-  function moveStory(id: string, direction: -1 | 1) {
-    setStories((current) => {
-      const ordered = sortStories(current);
-      const currentIndex = ordered.findIndex((item) => item.id === id);
-      const targetIndex = currentIndex + direction;
-      if (currentIndex < 0 || targetIndex < 0 || targetIndex >= ordered.length) return current;
-
-      const reordered = [...ordered];
-      [reordered[currentIndex], reordered[targetIndex]] = [reordered[targetIndex], reordered[currentIndex]];
-      return reordered.map((item, index) => ({ ...item, order: index + 1 }));
-    });
-    setAnnouncement("Orden actualizado sólo en esta demostración.");
+  async function moveStory(id: string, direction: -1 | 1) {
+    const ordered = sortStories(stories);
+    const currentIndex = ordered.findIndex((item) => item.id === id);
+    const targetIndex = currentIndex + direction;
+    if (currentIndex < 0 || targetIndex < 0 || targetIndex >= ordered.length) return;
+    [ordered[currentIndex], ordered[targetIndex]] = [ordered[targetIndex], ordered[currentIndex]];
+    const nextStories = ordered.map((item, index) => ({ ...item, order: index + 1 }));
+    if (await reorder(nextStories)) setStories(nextStories);
   }
 
-  function toggleVisibility(item: CommunityStoryViewModel) {
+  async function toggleVisibility(item: CommunityStoryViewModel) {
     const visible = !item.visible;
+    const { id: _id, order: _order, ...values } = item;
+    const result = await save(item.id, { ...values, visible }, {
+      action: `visibility:${item.id}`,
+      successMessage: visible ? `«${item.song}» ahora es visible en el muro.` : `«${item.song}» quedó oculta del muro.`,
+    });
+    if (!result.success) return;
     setStories((current) => current.map((entry) => entry.id === item.id ? { ...entry, visible } : entry));
     if (selectedId === item.id) setDraft((current) => ({ ...current, visible }));
-    setAnnouncement(`${item.song} ahora está ${visible ? "visible" : "oculta"} en esta demostración.`);
   }
 
-  function submitDraft(event: FormEvent<HTMLFormElement>) {
+  async function submitDraft(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     const nextErrors = validateCommunityStoryDraft(draft);
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
-      setAnnouncement("Revisa los campos marcados antes de continuar.");
+      notify("error", "Revisa los campos marcados antes de continuar.");
       requestAnimationFrame(() => form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
       return;
     }
 
+    const values = { song: draft.song, artist: draft.artist, story: draft.story, feeling: draft.feeling, visible: draft.visible };
+    const result = await save(selectedId, values, {
+      successMessage: selectedId ? "Historia guardada. Ya se ve en el muro." : "Historia agregada al final del muro.",
+    });
+    if (!result.success) return;
     if (selectedId) {
-      setStories((current) => current.map((item) => item.id === selectedId ? { ...item, ...draft } : item));
-      setAnnouncement("Cambios aplicados sólo en esta demostración.");
+      setStories((current) => current.map((item) => item.id === selectedId ? { ...item, ...values } : item));
       return;
     }
-
-    const id = `community-story-demo-${stories.length + 1}`;
-    setStories((current) => [...current, { ...draft, id, order: current.length + 1 }]);
+    if (!result.id) return;
+    const id = result.id;
+    setStories((current) => [...current, { ...values, id, order: Math.max(0, ...current.map((item) => item.order)) + 1 }]);
     setSelectedId(id);
-    setAnnouncement("Historia creada sólo en esta demostración.");
   }
 
   return (
@@ -107,7 +112,7 @@ export function CommunityStoryManager({ initialStories }: CommunityStoryManagerP
       <section aria-labelledby="stories-list-title" className={styles.managerListPanel}>
         <div className={styles.panelHeading}>
           <div><p className={styles.sectionLabel}>Orden del muro</p><h2 id="stories-list-title">Historias</h2></div>
-          <button className={styles.secondaryButton} onClick={startCreating} type="button">Nueva historia</button>
+          <button className={styles.secondaryButton} disabled={saving} onClick={startCreating} type="button">Nueva historia</button>
         </div>
         <ol className={styles.managerList}>
           {sortedStories.map((item, index) => (
@@ -118,9 +123,9 @@ export function CommunityStoryManager({ initialStories }: CommunityStoryManagerP
                 <em>{item.visible ? "Visible" : "Oculta"}</em>
               </button>
               <div aria-label={`Acciones para ${item.song}`} className={styles.rowActions}>
-                <button aria-label={`Subir ${item.song}`} disabled={index === 0} onClick={() => moveStory(item.id, -1)} type="button"><MoveIcon direction="up" /></button>
-                <button aria-label={`Bajar ${item.song}`} disabled={index === sortedStories.length - 1} onClick={() => moveStory(item.id, 1)} type="button"><MoveIcon direction="down" /></button>
-                <button onClick={() => toggleVisibility(item)} type="button">{item.visible ? "Ocultar" : "Mostrar"}</button>
+                <button aria-label={`Subir ${item.song}`} disabled={index === 0 || saving} onClick={() => moveStory(item.id, -1)} type="button"><MoveIcon direction="up" /></button>
+                <button aria-label={`Bajar ${item.song}`} disabled={index === sortedStories.length - 1 || saving} onClick={() => moveStory(item.id, 1)} type="button"><MoveIcon direction="down" /></button>
+                <button aria-busy={pendingAction === `visibility:${item.id}`} disabled={saving} onClick={() => toggleVisibility(item)} type="button">{pendingAction === `visibility:${item.id}` ? <Spinner /> : null}{item.visible ? "Ocultar" : "Mostrar"}</button>
               </div>
             </li>
           ))}
@@ -129,7 +134,7 @@ export function CommunityStoryManager({ initialStories }: CommunityStoryManagerP
 
       <section aria-labelledby="story-editor-title" className={styles.editorPanel}>
         <div className={styles.panelHeading}>
-          <div><p className={styles.sectionLabel}>{isCreating ? "Nuevo elemento" : "Edición local"}</p><h2 id="story-editor-title">{isCreating ? "Crear historia" : "Editar historia"}</h2></div>
+          <div><p className={styles.sectionLabel}>{isCreating ? "Nuevo elemento" : "Edición guardada"}</p><h2 id="story-editor-title">{isCreating ? "Crear historia" : "Editar historia"}</h2></div>
         </div>
         <form className={styles.editorForm} noValidate onSubmit={submitDraft}>
           <div className={styles.twoColumnFields}>
@@ -140,7 +145,7 @@ export function CommunityStoryManager({ initialStories }: CommunityStoryManagerP
           <AdminTextField error={errors.feeling} id="story-feeling" label="Sentimiento" onChange={(value) => updateDraft("feeling", value)} required value={draft.feeling} />
           <VisibilityField checked={draft.visible} id="story-visible" onChange={(checked) => updateDraft("visible", checked)} />
           <div className={styles.formActions}>
-            <button className={styles.primaryButton} type="submit">Aplicar en demo</button>
+            <button aria-busy={pendingAction === "save"} className={styles.primaryButton} disabled={saving} type="submit">{pendingAction === "save" ? <><Spinner />Guardando…</> : "Guardar historia"}</button>
             <button
               className={styles.textButton}
               onClick={() => {
@@ -166,7 +171,7 @@ export function CommunityStoryManager({ initialStories }: CommunityStoryManagerP
           </article>
         </div>
       </section>
-      <p aria-live="polite" className={styles.srOnly}>{announcement}</p>
+      <AdminFeedbackRegion announcement={announcement} feedback={feedback} onDismiss={dismissFeedback} />
     </div>
   );
 }

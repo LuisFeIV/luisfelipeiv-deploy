@@ -1,4 +1,9 @@
+"use client";
+
+import { useEffect } from "react";
+
 import styles from "../admin.module.css";
+import type { AdminFeedback } from "./use-site-content-mutations";
 
 type TextFieldProps = {
   error?: string;
@@ -100,12 +105,45 @@ export function AdminTextAreaField({
   );
 }
 
+type FeedbackRegionProps = {
+  announcement: string;
+  feedback: AdminFeedback | null;
+  onDismiss: () => void;
+};
+
+export function Spinner() {
+  return <span aria-hidden="true" className={styles.spinner} />;
+}
+
+export function AdminFeedbackRegion({ announcement, feedback, onDismiss }: FeedbackRegionProps) {
+  useEffect(() => {
+    if (feedback?.tone !== "success") return;
+    const timeout = window.setTimeout(onDismiss, 5000);
+    return () => window.clearTimeout(timeout);
+  }, [feedback, onDismiss]);
+
+  return (
+    <>
+      <p aria-live="polite" className={styles.srOnly}>{announcement}</p>
+      <div aria-live={feedback?.tone === "error" ? "assertive" : "polite"} className={styles.toastRegion} role={feedback?.tone === "error" ? "alert" : "status"}>
+        {feedback ? (
+          <div className={styles.toast} data-tone={feedback.tone} key={feedback.id}>
+            <span aria-hidden="true" className={styles.toastMark}>{feedback.tone === "success" ? "✓" : "!"}</span>
+            <p>{feedback.message}</p>
+            <button aria-label="Cerrar mensaje" className={styles.toastClose} onClick={onDismiss} type="button">×</button>
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+}
+
 export function VisibilityField({ checked, id, onChange }: VisibilityFieldProps) {
   return (
     <div className={styles.visibilityField}>
       <div>
         <label htmlFor={id}>Visible en el sitio</label>
-        <p>Ocultarlo sólo cambia esta demostración.</p>
+        <p>Si lo ocultas, se guarda pero no aparece en la página pública.</p>
       </div>
       <input
         checked={checked}

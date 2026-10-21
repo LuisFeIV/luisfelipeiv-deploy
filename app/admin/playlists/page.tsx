@@ -1,9 +1,12 @@
-import { AdminFrame, DemoNotice } from "../_components/admin-frame";
+import { AdminFrame } from "../_components/admin-frame";
 import { PlaylistManager } from "../_components/playlist-manager";
 import styles from "../admin.module.css";
-import { mockAdminPlaylists } from "@/lib/admin/mock-data";
+import { listAdminPlaylists } from "@/lib/db/site-content";
 
-export default function AdminPlaylistsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminPlaylistsPage() {
+  const playlists = await listAdminPlaylists();
   return (
     <AdminFrame activeSection="playlists">
       <header className={styles.pageHeader}>
@@ -13,8 +16,7 @@ export default function AdminPlaylistsPage() {
           <p className={styles.copy}>Crea, ordena y previsualiza las tarjetas que aparecen en el sitio.</p>
         </div>
       </header>
-      <DemoNotice />
-      <PlaylistManager initialPlaylists={mockAdminPlaylists} />
+      <PlaylistManager initialPlaylists={playlists} />
     </AdminFrame>
   );
 }

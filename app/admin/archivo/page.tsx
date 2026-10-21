@@ -1,9 +1,12 @@
-import { AdminFrame, DemoNotice } from "../_components/admin-frame";
+import { AdminFrame } from "../_components/admin-frame";
 import { ArchiveManager } from "../_components/archive-manager";
 import styles from "../admin.module.css";
-import { mockArchiveItems } from "@/lib/admin/mock-data";
+import { listAdminArchiveItems } from "@/lib/db/site-content";
 
-export default function AdminArchivePage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminArchivePage() {
+  const items = await listAdminArchiveItems();
   return (
     <AdminFrame activeSection="archive">
       <header className={styles.pageHeader}>
@@ -13,8 +16,7 @@ export default function AdminArchivePage() {
           <p className={styles.copy}>Organiza los videos y episodios destacados del carrusel público.</p>
         </div>
       </header>
-      <DemoNotice />
-      <ArchiveManager initialItems={mockArchiveItems} />
+      <ArchiveManager initialItems={items} />
     </AdminFrame>
   );
 }

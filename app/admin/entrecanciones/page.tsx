@@ -1,9 +1,12 @@
-import { AdminFrame, DemoNotice } from "../_components/admin-frame";
+import { AdminFrame } from "../_components/admin-frame";
 import { CommunityStoryManager } from "../_components/community-story-manager";
 import styles from "../admin.module.css";
-import { mockCommunityStories } from "@/lib/admin/mock-data";
+import { listAdminCommunityStories } from "@/lib/db/site-content";
 
-export default function AdminCommunityStoriesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminCommunityStoriesPage() {
+  const stories = await listAdminCommunityStories();
   return (
     <AdminFrame activeSection="stories">
       <header className={styles.pageHeader}>
@@ -13,8 +16,7 @@ export default function AdminCommunityStoriesPage() {
           <p className={styles.copy}>Selecciona, ordena y previsualiza las historias que forman el muro público.</p>
         </div>
       </header>
-      <DemoNotice />
-      <CommunityStoryManager initialStories={mockCommunityStories} />
+      <CommunityStoryManager initialStories={stories} />
     </AdminFrame>
   );
 }

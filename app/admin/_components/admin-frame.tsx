@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import styles from "../admin.module.css";
 
-type AdminSection = "archive" | "dedications" | "numbers" | "playlists" | "stories";
+type AdminSection = "about-images" | "archive" | "dedications" | "numbers" | "playlists" | "recommendations" | "ribbon" | "stories";
 
 type AdminFrameProps = {
   activeSection: AdminSection;
@@ -15,10 +15,13 @@ const navigationItems: Array<{
   label: string;
   section: AdminSection;
 }> = [
-  { href: "/admin/dedicatorias", label: "Dedicatorias", section: "dedications" },
+  { href: "/admin/cinta", label: "Cinta", section: "ribbon" },
+  { href: "/admin/quien-soy", label: "Quién soy", section: "about-images" },
   { href: "/admin/archivo", label: "El Archivo", section: "archive" },
   { href: "/admin/playlists", label: "Playlists", section: "playlists" },
   { href: "/admin/entrecanciones", label: "Entrecanciones", section: "stories" },
+  { href: "/admin/dedicatorias", label: "Dedicatorias", section: "dedications" },
+  { href: "/admin/recomendaciones", label: "Recomendaciones", section: "recommendations" },
   { href: "/admin/numeros", label: "Números públicos", section: "numbers" },
 ];
 
