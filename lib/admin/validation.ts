@@ -6,7 +6,7 @@ import type {
 } from "@/lib/admin/models";
 
 export type PlaylistDraftErrors = Partial<
-  Record<"title" | "description" | "spotifyUrl" | "label", string>
+  Record<"title" | "description" | "spotifyUrl" | "label" | "imageUrl", string>
 >;
 
 export type PublicNumberDraftErrors = Partial<
@@ -14,7 +14,7 @@ export type PublicNumberDraftErrors = Partial<
 >;
 
 export type ArchiveItemDraftErrors = Partial<
-  Record<"title" | "subtitle" | "metric" | "destinationUrl" | "imagePath", string>
+  Record<"title" | "subtitle" | "metric" | "destinationUrl" | "imagePath" | "imageAlt", string>
 >;
 
 export type CommunityStoryDraftErrors = Partial<
@@ -39,6 +39,15 @@ function isHttpUrl(value: string) {
   }
 }
 
+function isVideoProviderArtwork(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && ["cdninstagram.com", "tiktokcdn.com"].some((domain) => url.hostname === domain || url.hostname.endsWith(`.${domain}`));
+  } catch {
+    return false;
+  }
+}
+
 export function validatePlaylistDraft(draft: AdminPlaylistDraft) {
   const errors: PlaylistDraftErrors = {};
 
@@ -48,6 +57,10 @@ export function validatePlaylistDraft(draft: AdminPlaylistDraft) {
     errors.spotifyUrl = "Usa una URL válida de open.spotify.com.";
   }
   if (!draft.label.trim()) errors.label = "Agrega una etiqueta.";
+  const isSpotifyArtwork = /^https:\/\/(?:i\.scdn\.co|image-cdn-ak\.spotifycdn\.com)\//.test(draft.imageUrl);
+  if (draft.imageUrl && !draft.imageUrl.startsWith("/images/") && !draft.imageUrl.startsWith("/api/media/") && !isSpotifyArtwork) {
+    errors.imageUrl = "Elige una imagen del sitio o de la biblioteca.";
+  }
 
   return errors;
 }
@@ -59,8 +72,11 @@ export function validateArchiveItemDraft(draft: ArchiveItemDraft) {
   if (!draft.subtitle.trim()) errors.subtitle = "Agrega un artista o contexto.";
   if (!draft.metric.trim()) errors.metric = "Agrega una cifra o llamada breve.";
   if (!isHttpUrl(draft.destinationUrl)) errors.destinationUrl = "Agrega una URL válida.";
-  if (draft.imagePath && !draft.imagePath.startsWith("/images/")) {
-    errors.imagePath = "Usa una ruta local dentro de /images/.";
+  if (draft.imagePath && !draft.imagePath.startsWith("/images/") && !draft.imagePath.startsWith("/api/media/") && !/^https:\/\/i\.ytimg\.com\/vi\/[\w-]+\/hqdefault\.jpg$/.test(draft.imagePath) && !isVideoProviderArtwork(draft.imagePath)) {
+    errors.imagePath = "Elige una imagen del sitio o de la biblioteca.";
+  }
+  if (draft.imagePath && !draft.imageAlt.trim()) {
+    errors.imageAlt = "Describe la imagen para hacerla accesible.";
   }
 
   return errors;

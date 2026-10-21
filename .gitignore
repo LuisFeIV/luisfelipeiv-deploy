@@ -3,6 +3,7 @@
 
 # Next.js
 /.next
+/.local-media
 /out
 
 # production

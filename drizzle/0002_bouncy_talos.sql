@@ -1,0 +1,1 @@
+ALTER TABLE "site_playlists" ADD COLUMN "image_url" text DEFAULT '' NOT NULL;

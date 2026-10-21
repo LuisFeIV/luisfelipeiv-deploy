@@ -3,8 +3,10 @@ import {
   boolean,
   check,
   index,
+  integer,
   pgEnum,
   pgTable,
+  uniqueIndex,
   text,
   timestamp,
   uuid,
@@ -27,9 +29,177 @@ export type DedicationStatus = (typeof dedicationStatusValues)[number];
 export type PrivateDedicationStyle =
   (typeof privateDedicationStyleValues)[number];
 
+export const ribbonItemKindValues = ["artist", "song", "phrase"] as const;
+export type RibbonItemKind = (typeof ribbonItemKindValues)[number];
+
+export const playlistCardToneValues = ["bolero", "stories", "dedication"] as const;
+export type PlaylistCardTone = (typeof playlistCardToneValues)[number];
+
 export const dedicationStatus = pgEnum(
   "dedication_status",
   dedicationStatusValues,
+);
+
+export const siteMediaAssets = pgTable("site_media_assets", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  storage_key: text("storage_key").notNull().unique(),
+  original_name: text("original_name").notNull(),
+  content_type: text("content_type").notNull(),
+  size_bytes: integer("size_bytes").notNull(),
+  width: integer("width").notNull(),
+  height: integer("height").notNull(),
+  created_at: timestamp("created_at", { mode: "string", withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const archiveItems = pgTable(
+  "archive_items",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    title: text("title").notNull(),
+    subtitle: text("subtitle").notNull(),
+    metric: text("metric").notNull(),
+    destination_url: text("destination_url").notNull(),
+    image_url: text("image_url").notNull().default(""),
+    image_alt: text("image_alt").notNull().default(""),
+    visible: boolean("visible").notNull().default(true),
+    sort_order: integer("sort_order").notNull(),
+    created_at: timestamp("created_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updated_at: timestamp("updated_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("archive_items_visible_order_idx").on(table.visible, table.sort_order)],
+);
+
+export const sitePlaylists = pgTable(
+  "site_playlists",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    spotify_url: text("spotify_url").notNull(),
+    image_url: text("image_url").notNull().default(""),
+    label: text("label").notNull(),
+    tone: text("tone").$type<PlaylistCardTone>().notNull().default("dedication"),
+    visible: boolean("visible").notNull().default(true),
+    sort_order: integer("sort_order").notNull(),
+    created_at: timestamp("created_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updated_at: timestamp("updated_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("site_playlists_visible_order_idx").on(table.visible, table.sort_order)],
+);
+
+export const communityStories = pgTable(
+  "community_stories",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    song: text("song").notNull(),
+    artist: text("artist").notNull(),
+    story: text("story").notNull(),
+    feeling: text("feeling").notNull(),
+    visible: boolean("visible").notNull().default(true),
+    sort_order: integer("sort_order").notNull(),
+    created_at: timestamp("created_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updated_at: timestamp("updated_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("community_stories_visible_order_idx").on(table.visible, table.sort_order)],
+);
+
+export const publicNumbers = pgTable(
+  "public_numbers",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    platform: text("platform").notNull(),
+    value: text("value").notNull(),
+    suffix: text("suffix").notNull(),
+    description: text("description").notNull(),
+    visible: boolean("visible").notNull().default(true),
+    sort_order: integer("sort_order").notNull(),
+    created_at: timestamp("created_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updated_at: timestamp("updated_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("public_numbers_visible_order_idx").on(table.visible, table.sort_order)],
+);
+
+export const ribbonItems = pgTable(
+  "ribbon_items",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    label: text("label").notNull(),
+    kind: text("kind").$type<RibbonItemKind>().notNull().default("artist"),
+    visible: boolean("visible").notNull().default(true),
+    sort_order: integer("sort_order").notNull(),
+    created_at: timestamp("created_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updated_at: timestamp("updated_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("ribbon_items_visible_order_idx").on(table.visible, table.sort_order)],
+);
+
+export const aboutImages = pgTable(
+  "about_images",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    image_url: text("image_url").notNull(),
+    alt_text: text("alt_text").notNull(),
+    object_position: text("object_position").notNull().default("center center"),
+    visible: boolean("visible").notNull().default(true),
+    sort_order: integer("sort_order").notNull(),
+    created_at: timestamp("created_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updated_at: timestamp("updated_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("about_images_visible_order_idx").on(table.visible, table.sort_order)],
+);
+
+export const dedicationRecommendations = pgTable(
+  "dedication_recommendations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    mood_key: text("mood_key").notNull(),
+    mood_label: text("mood_label").notNull(),
+    mood_description: text("mood_description").notNull(),
+    song: text("song").notNull(),
+    artist: text("artist").notNull(),
+    description: text("description").notNull(),
+    playlist_url: text("playlist_url").notNull(),
+    spotify_track_id: text("spotify_track_id").notNull(),
+    spotify_url: text("spotify_url").notNull(),
+    visible: boolean("visible").notNull().default(true),
+    sort_order: integer("sort_order").notNull(),
+    created_at: timestamp("created_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updated_at: timestamp("updated_at", { mode: "string", withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("dedication_recommendations_mood_key_idx").on(table.mood_key),
+    index("dedication_recommendations_visible_order_idx").on(table.visible, table.sort_order),
+  ],
 );
 
 export const dedications = pgTable(
