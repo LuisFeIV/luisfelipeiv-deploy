@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import styles from "./page.module.css";
 
@@ -32,12 +33,12 @@ export default function NewsletterConfirmedPage() {
             canciones que vale la pena escuchar.
           </p>
           <div className={styles.actions}>
-            <a className={styles.primaryAction} href="/">
+            <Link className={styles.primaryAction} href="/">
               Volver al sitio
-            </a>
-            <a className={styles.secondaryAction} href="/#buzon">
+            </Link>
+            <Link className={styles.secondaryAction} href="/#buzon">
               Contar mi historia
-            </a>
+            </Link>
           </div>
           <p className={styles.note}>Una vez a la semana. Sin spam.</p>
         </div>
